@@ -1,0 +1,92 @@
+[
+  {
+    "slug": "lawn-mowing",
+    "name": "Lawn Mowing",
+    "description": "Professional lawn mowing service to keep your grass looking pristine all year round.",
+    "category": "Landscaping",
+    "icon_key": "lawn",
+    "starting_price_label": "from £35",
+    "estimated_duration_minutes": 60
+  },
+  {
+    "slug": "hedge-trimming",
+    "name": "Hedge Trimming",
+    "description": "Expert hedge cutting and shaping to maintain clean, professional boundaries.",
+    "category": "Landscaping",
+    "icon_key": "hedge",
+    "starting_price_label": "from £50",
+    "estimated_duration_minutes": 90
+  },
+  {
+    "slug": "garden-clearance",
+    "name": "Garden Clearance",
+    "description": "Complete garden clearing including waste removal. Transform overgrown spaces.",
+    "category": "Landscaping",
+    "icon_key": "garden",
+    "starting_price_label": "from £150",
+    "estimated_duration_minutes": 180
+  },
+  {
+    "slug": "tree-pruning",
+    "name": "Tree Pruning",
+    "description": "Professional tree trimming and pruning to promote healthy growth and appearance.",
+    "category": "Landscaping",
+    "icon_key": "tree",
+    "starting_price_label": "from £80",
+    "estimated_duration_minutes": 120
+  },
+  {
+    "slug": "patio-cleaning",
+    "name": "Patio Cleaning",
+    "description": "High-pressure jet washing to restore your patio, driveway, and outdoor surfaces.",
+    "category": "Maintenance",
+    "icon_key": "patio",
+    "starting_price_label": "from £75",
+    "estimated_duration_minutes": 90
+  },
+  {
+    "slug": "fence-repair",
+    "name": "Fence Repair",
+    "description": "Quality fence repairs and panel replacements to secure your garden boundaries.",
+    "category": "Maintenance",
+    "icon_key": "fence",
+    "starting_price_label": "from £60",
+    "estimated_duration_minutes": 120
+  },
+  {
+    "slug": "planting-service",
+    "name": "Planting Service",
+    "description": "Expert planting of flowers, shrubs, and trees to beautify your garden.",
+    "category": "Garden Design",
+    "icon_key": "planting",
+    "starting_price_label": "from £45",
+    "estimated_duration_minutes": 90
+  },
+  {
+    "slug": "garden-design",
+    "name": "Garden Design",
+    "description": "Full garden design consultation and planning to create your dream outdoor space.",
+    "category": "Garden Design",
+    "icon_key": "garden",
+    "starting_price_label": "from £200",
+    "estimated_duration_minutes": 120
+  },
+  {
+    "slug": "home-cleaning",
+    "name": "Home Cleaning",
+    "description": "Thorough house cleaning including all rooms, surfaces, and floors.",
+    "category": "Home Cleaning",
+    "icon_key": "cleaning",
+    "starting_price_label": "from £60",
+    "estimated_duration_minutes": 120
+  },
+  {
+    "slug": "deep-cleaning",
+    "name": "Deep Cleaning",
+    "description": "Intensive cleaning service for kitchens, bathrooms, and hard-to-reach areas.",
+    "category": "Home Cleaning",
+    "icon_key": "cleaning",
+    "starting_price_label": "from £120",
+    "estimated_duration_minutes": 240
+  }
+]

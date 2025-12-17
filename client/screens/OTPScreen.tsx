@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   button: {
-    backgroundColor: "#1F7A3B",
+    backgroundColor: "#0A3E12",
   },
   resendContainer: {
     flexDirection: "row",

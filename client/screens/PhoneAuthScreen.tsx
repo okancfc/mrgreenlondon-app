@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: Spacing.md,
-    backgroundColor: "#1F7A3B",
+    backgroundColor: "#0A3E12",
   },
   disclaimer: {
     textAlign: "center",

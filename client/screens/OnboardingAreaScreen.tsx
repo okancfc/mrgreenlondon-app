@@ -136,6 +136,6 @@ const styles = StyleSheet.create({
     width: 24,
   },
   button: {
-    backgroundColor: "#1F7A3B",
+    backgroundColor: "#0A3E12",
   },
 });

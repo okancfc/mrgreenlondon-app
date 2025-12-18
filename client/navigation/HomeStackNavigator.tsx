@@ -24,7 +24,7 @@ export default function HomeStackNavigator() {
           component={HomeScreen}
           options={{
             headerLeft: () => <HeaderLogo />,
-            headerTitle: "",
+            headerTitle: "Home",
             headerRight: () => (
               <HeaderMenuButton onPress={() => setMenuVisible(true)} />
             ),

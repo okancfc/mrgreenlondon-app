@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from "react";
-import { View, FlatList, StyleSheet, RefreshControl, Pressable, ActivityIndicator } from "react-native";
+import React, { useCallback, useState, useRef, useEffect } from "react";
+import { View, FlatList, StyleSheet, RefreshControl, Pressable, ActivityIndicator, Animated, LayoutChangeEvent } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -29,6 +29,24 @@ export default function BookingsScreen() {
   const navigation = useNavigation<NavigationProp>();
   const [activeTab, setActiveTab] = useState<TabType>("upcoming");
 
+  // Animation for sliding indicator
+  const slideAnim = useRef(new Animated.Value(0)).current;
+  const [tabWidth, setTabWidth] = useState(0);
+
+  useEffect(() => {
+    Animated.spring(slideAnim, {
+      toValue: activeTab === "upcoming" ? 0 : 1,
+      useNativeDriver: true,
+      tension: 100,
+      friction: 10,
+    }).start();
+  }, [activeTab, slideAnim]);
+
+  const handleTabLayout = (event: LayoutChangeEvent) => {
+    const { width } = event.nativeEvent.layout;
+    setTabWidth(width / 2);
+  };
+
   const {
     data: bookings,
     isLoading,
@@ -42,7 +60,7 @@ export default function BookingsScreen() {
 
   const filteredBookings = React.useMemo(() => {
     if (!bookings) return [];
-    
+
     const now = new Date();
     return bookings.filter((booking) => {
       const scheduledDate = new Date(booking.scheduled_at);
@@ -70,13 +88,32 @@ export default function BookingsScreen() {
   );
 
   const renderTabs = () => (
-    <View style={[styles.tabsContainer, { backgroundColor: theme.backgroundDefault }]}>
+    <View
+      style={[styles.tabsContainer, { backgroundColor: theme.backgroundDefault }]}
+      onLayout={handleTabLayout}
+    >
+      {/* Animated sliding indicator */}
+      <Animated.View
+        style={[
+          styles.tabIndicator,
+          {
+            backgroundColor: theme.brandGreen,
+            width: tabWidth - Spacing.xs,
+            transform: [
+              {
+                translateX: slideAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [Spacing.xs / 2, tabWidth + Spacing.xs / 2],
+                }),
+              },
+            ],
+          },
+        ]}
+      />
+
       <Pressable
         onPress={() => setActiveTab("upcoming")}
-        style={[
-          styles.tab,
-          activeTab === "upcoming" && { backgroundColor: theme.brandGreen },
-        ]}
+        style={styles.tab}
       >
         <ThemedText
           style={[
@@ -89,10 +126,7 @@ export default function BookingsScreen() {
       </Pressable>
       <Pressable
         onPress={() => setActiveTab("past")}
-        style={[
-          styles.tab,
-          activeTab === "past" && { backgroundColor: theme.brandGreen },
-        ]}
+        style={styles.tab}
       >
         <ThemedText
           style={[
@@ -173,12 +207,20 @@ const styles = StyleSheet.create({
     padding: Spacing.xs,
     borderRadius: BorderRadius.sm,
     marginBottom: Spacing.xl,
+    position: "relative",
+  },
+  tabIndicator: {
+    position: "absolute",
+    top: Spacing.xs,
+    bottom: Spacing.xs,
+    borderRadius: BorderRadius.xs,
   },
   tab: {
     flex: 1,
     paddingVertical: Spacing.sm,
     alignItems: "center",
     borderRadius: BorderRadius.xs,
+    zIndex: 1,
   },
   tabText: {
     fontWeight: "600",

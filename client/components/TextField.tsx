@@ -18,7 +18,7 @@ interface TextFieldProps extends TextInputProps {
 }
 
 export const TextField = forwardRef<TextInput, TextFieldProps>(
-  ({ label, error, containerStyle, prefix, style, ...props }, ref) => {
+  ({ label, error, containerStyle, prefix, style, multiline, ...props }, ref) => {
     const { theme } = useTheme();
 
     return (
@@ -38,6 +38,7 @@ export const TextField = forwardRef<TextInput, TextFieldProps>(
               backgroundColor: theme.backgroundDefault,
               borderColor: error ? theme.error : theme.border,
             },
+            multiline ? styles.inputContainerMultiline : null,
           ]}
         >
           {prefix ? (
@@ -49,9 +50,11 @@ export const TextField = forwardRef<TextInput, TextFieldProps>(
               styles.input,
               { color: theme.text },
               prefix ? styles.inputWithPrefix : null,
+              multiline ? styles.inputMultiline : null,
               style,
             ]}
             placeholderTextColor={theme.textSecondary}
+            multiline={multiline}
             {...props}
           />
         </View>
@@ -85,6 +88,12 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
     paddingHorizontal: Spacing.lg,
   },
+  inputContainerMultiline: {
+    height: "auto",
+    minHeight: 80,
+    alignItems: "flex-start",
+    paddingVertical: Spacing.md,
+  },
   prefix: {
     marginRight: Spacing.sm,
     fontWeight: "500",
@@ -93,6 +102,12 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     height: "100%",
+  },
+  inputMultiline: {
+    height: "auto",
+    minHeight: 60,
+    textAlignVertical: "top",
+    paddingTop: 0,
   },
   inputWithPrefix: {
     paddingLeft: 0,

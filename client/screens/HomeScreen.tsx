@@ -95,6 +95,7 @@ export default function HomeScreen() {
         !services?.length && !isLoading ? styles.emptyContent : null,
       ]}
       scrollIndicatorInsets={{ bottom: insets.bottom }}
+      showsVerticalScrollIndicator={false}
       data={services || []}
       renderItem={renderService}
       keyExtractor={(item) => item.id}

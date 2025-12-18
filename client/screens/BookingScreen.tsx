@@ -180,7 +180,11 @@ export default function BookingScreen() {
                 routes: [
                   {
                     name: "Main",
-                    params: { screen: "BookingsTab" },
+                    state: {
+                      routes: [
+                        { name: "BookingsTab" }
+                      ],
+                    },
                   },
                 ],
               });

@@ -73,7 +73,7 @@ export default function PhoneAuthScreen() {
     >
       <View style={styles.header}>
         <Image
-          source={require("../../assets/images/icon.png")}
+          source={require("../../assets/images/header-logo.png")}
           style={styles.logo}
           resizeMode="contain"
         />
@@ -140,8 +140,8 @@ const styles = StyleSheet.create({
     marginBottom: Spacing["4xl"],
   },
   logo: {
-    width: 80,
-    height: 80,
+    width: 100,
+    height: 100,
     marginBottom: Spacing.xl,
   },
   title: {

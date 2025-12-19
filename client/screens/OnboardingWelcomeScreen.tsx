@@ -36,7 +36,7 @@ export default function OnboardingWelcomeScreen() {
       <View style={styles.content}>
         <View style={[styles.illustrationContainer, { backgroundColor: theme.brandGreen + "15" }]}>
           <Image
-            source={require("../../assets/images/icon.png")}
+            source={require("../../assets/images/header-logo.png")}
             style={styles.illustration}
             resizeMode="contain"
           />

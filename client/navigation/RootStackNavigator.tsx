@@ -1,9 +1,7 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainTabNavigator from "@/navigation/MainTabNavigator";
-import OnboardingWelcomeScreen from "@/screens/OnboardingWelcomeScreen";
-import OnboardingAreaScreen from "@/screens/OnboardingAreaScreen";
-import OnboardingHowItWorksScreen from "@/screens/OnboardingHowItWorksScreen";
+import OnboardingScreen from "@/screens/OnboardingScreen";
 import PhoneAuthScreen from "@/screens/PhoneAuthScreen";
 import OTPScreen from "@/screens/OTPScreen";
 import BookingScreen from "@/screens/BookingScreen";
@@ -13,9 +11,7 @@ import { useAuth } from "@/context/AuthContext";
 import { LoadingScreen } from "@/components/LoadingScreen";
 
 export type RootStackParamList = {
-  OnboardingWelcome: undefined;
-  OnboardingArea: undefined;
-  OnboardingHowItWorks: undefined;
+  Onboarding: undefined;
   Auth: undefined;
   OTP: { phone: string };
   Main: { screen?: string } | undefined;
@@ -35,7 +31,7 @@ export default function RootStackNavigator() {
 
   const getInitialRoute = (): keyof RootStackParamList => {
     if (!isOnboardingComplete) {
-      return "OnboardingWelcome";
+      return "Onboarding";
     }
     if (!user) {
       return "Auth";
@@ -49,19 +45,9 @@ export default function RootStackNavigator() {
       initialRouteName={getInitialRoute()}
     >
       <Stack.Screen
-        name="OnboardingWelcome"
-        component={OnboardingWelcomeScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="OnboardingArea"
-        component={OnboardingAreaScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="OnboardingHowItWorks"
-        component={OnboardingHowItWorksScreen}
-        options={{ headerShown: false }}
+        name="Onboarding"
+        component={OnboardingScreen}
+        options={{ headerShown: false, animation: "fade" }}
       />
       <Stack.Screen
         name="Auth"

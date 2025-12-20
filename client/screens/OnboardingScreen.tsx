@@ -73,7 +73,7 @@ export default function OnboardingScreen() {
             setOnboardingComplete(true);
             navigation.reset({
                 index: 0,
-                routes: [{ name: "Auth" }],
+                routes: [{ name: "SignIn" }],
             });
         }
     };
@@ -83,7 +83,7 @@ export default function OnboardingScreen() {
         setOnboardingComplete(true);
         navigation.reset({
             index: 0,
-            routes: [{ name: "Auth" }],
+            routes: [{ name: "SignIn" }],
         });
     };
 

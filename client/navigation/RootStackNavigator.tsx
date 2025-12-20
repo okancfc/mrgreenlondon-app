@@ -2,8 +2,8 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainTabNavigator from "@/navigation/MainTabNavigator";
 import OnboardingScreen from "@/screens/OnboardingScreen";
-import PhoneAuthScreen from "@/screens/PhoneAuthScreen";
-import OTPScreen from "@/screens/OTPScreen";
+import SignInScreen from "@/screens/SignInScreen";
+import SignUpScreen from "@/screens/SignUpScreen";
 import BookingScreen from "@/screens/BookingScreen";
 import BookingDetailScreen from "@/screens/BookingDetailScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
@@ -12,8 +12,8 @@ import { LoadingScreen } from "@/components/LoadingScreen";
 
 export type RootStackParamList = {
   Onboarding: undefined;
-  Auth: undefined;
-  OTP: { phone: string };
+  SignIn: undefined;
+  SignUp: undefined;
   Main: { screen?: string } | undefined;
   Booking: { serviceId: string; serviceName: string };
   BookingDetail: { bookingId: string };
@@ -34,7 +34,7 @@ export default function RootStackNavigator() {
       return "Onboarding";
     }
     if (!user) {
-      return "Auth";
+      return "SignIn";
     }
     return "Main";
   };
@@ -50,13 +50,13 @@ export default function RootStackNavigator() {
         options={{ headerShown: false, animation: "fade" }}
       />
       <Stack.Screen
-        name="Auth"
-        component={PhoneAuthScreen}
+        name="SignIn"
+        component={SignInScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="OTP"
-        component={OTPScreen}
+        name="SignUp"
+        component={SignUpScreen}
         options={{
           headerShown: true,
           headerTitle: "",

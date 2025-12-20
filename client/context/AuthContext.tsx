@@ -4,7 +4,6 @@ import { supabase } from "@/lib/supabase";
 import { Profile } from "@/lib/types";
 import { getProfile, upsertProfile } from "@/lib/api";
 import { clearStorage, getOnboardingCompleted, getSelectedArea } from "@/lib/storage";
-import { getTestUser, IS_TEST_MODE_ENABLED, clearTestUser } from "@/lib/auth";
 
 interface AuthContextType {
   user: User | null;
@@ -15,7 +14,6 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   setOnboardingComplete: (complete: boolean) => void;
-  setTestUserLoggedIn: (user: any) => void; // Test modu için
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -33,39 +31,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const initializeAuth = async () => {
-    // Test modunda önce test kullanıcıyı kontrol et
-    if (IS_TEST_MODE_ENABLED) {
-      const testUser = await getTestUser();
-      if (testUser) {
-        console.log("🧪 TEST MODE: Test kullanıcı bulundu, giriş yapılıyor");
-        setUser(testUser as User);
-        setSession({
-          access_token: "test-access-token",
-          refresh_token: "test-refresh-token",
-          expires_in: 3600,
-          token_type: "bearer",
-          user: testUser,
-        } as Session);
-        await loadTestProfile(testUser);
-        return;
-      }
-    }
-
-    // Normal Supabase auth kontrolü
+    // Get initial session
     const { data: { session } } = await supabase.auth.getSession();
     setSession(session);
     setUser(session?.user ?? null);
+
     if (session?.user) {
-      loadProfile(session.user);
+      await loadProfile(session.user);
     } else {
       setIsLoading(false);
     }
 
-    // Auth state değişikliklerini dinle
+    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+
         if (session?.user) {
           await loadProfile(session.user);
         } else {
@@ -78,38 +60,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   };
 
-  // Test kullanıcı için mock profil yükle
-  const loadTestProfile = async (testUser: any) => {
-    try {
-      const area = await getSelectedArea();
-      const mockProfile: Profile = {
-        id: testUser.id,
-        phone: testUser.phone,
-        full_name: "Test User",
-        area: area || "London",
-        created_at: new Date().toISOString(),
-      };
-      setProfile(mockProfile);
-    } catch (error) {
-      console.error("Error loading test profile:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Test kullanıcı giriş yaptığında çağrılacak
-  const setTestUserLoggedIn = async (testUser: any) => {
-    setUser(testUser as User);
-    setSession({
-      access_token: "test-access-token",
-      refresh_token: "test-refresh-token",
-      expires_in: 3600,
-      token_type: "bearer",
-      user: testUser,
-    } as Session);
-    await loadTestProfile(testUser);
-  };
-
   const checkOnboarding = async () => {
     const completed = await getOnboardingCompleted();
     setIsOnboardingComplete(completed);
@@ -119,11 +69,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       let userProfile = await getProfile(user.id);
 
-      if (!userProfile && user.phone) {
+      if (!userProfile) {
         const area = await getSelectedArea();
+        const fullName = user.user_metadata?.full_name || null;
+
         userProfile = await upsertProfile({
           id: user.id,
-          phone: user.phone,
+          email: user.email || null,
+          phone: user.phone || null,
+          full_name: fullName,
           area,
         });
       }
@@ -158,7 +112,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signOut: handleSignOut,
     refreshProfile,
     setOnboardingComplete: setIsOnboardingComplete,
-    setTestUserLoggedIn,
   };
 
   return (

@@ -1,6 +1,7 @@
 export interface Profile {
   id: string;
-  phone: string;
+  email: string | null;
+  phone: string | null;
   full_name: string | null;
   area: string | null;
   created_at: string;

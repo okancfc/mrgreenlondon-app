@@ -43,7 +43,7 @@ export default function ProfileScreen() {
           await signOut();
           navigation.reset({
             index: 0,
-            routes: [{ name: "Auth" }],
+            routes: [{ name: "SignIn" }],
           });
         },
       },

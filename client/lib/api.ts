@@ -1,53 +1,11 @@
 import { supabase } from "./supabase";
 import { Profile, Service, Address, Booking, BookingWithDetails } from "./types";
-import { IS_TEST_MODE_ENABLED } from "./auth";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// Local services data for test mode
-import servicesData from "../data/services.json";
-
-// AsyncStorage keys for test mode
-const TEST_ADDRESSES_KEY = "@test_addresses";
-const TEST_BOOKINGS_KEY = "@test_bookings";
-
-// Generate mock services with IDs for test mode
-const getMockServices = (): Service[] => {
-  return servicesData.map((service, index) => ({
-    ...service,
-    id: `mock-service-${index + 1}`,
-    is_active: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  }));
-};
-
-// Test mode helpers for addresses
-async function getTestAddresses(): Promise<Address[]> {
-  const data = await AsyncStorage.getItem(TEST_ADDRESSES_KEY);
-  return data ? JSON.parse(data) : [];
-}
-
-async function saveTestAddresses(addresses: Address[]): Promise<void> {
-  await AsyncStorage.setItem(TEST_ADDRESSES_KEY, JSON.stringify(addresses));
-}
-
-// Test mode helpers for bookings
-async function getTestBookings(): Promise<BookingWithDetails[]> {
-  const data = await AsyncStorage.getItem(TEST_BOOKINGS_KEY);
-  return data ? JSON.parse(data) : [];
-}
-
-async function saveTestBookings(bookings: BookingWithDetails[]): Promise<void> {
-  await AsyncStorage.setItem(TEST_BOOKINGS_KEY, JSON.stringify(bookings));
-}
+// ============================================
+// Services
+// ============================================
 
 export async function getServices(): Promise<Service[]> {
-  // Test modunda local JSON'dan servisler yüklenir
-  if (IS_TEST_MODE_ENABLED) {
-    console.log("🧪 TEST MODE: Servisler local JSON'dan yükleniyor");
-    return getMockServices();
-  }
-
   const { data, error } = await supabase
     .from("services")
     .select("*")
@@ -59,12 +17,6 @@ export async function getServices(): Promise<Service[]> {
 }
 
 export async function getServiceById(id: string): Promise<Service | null> {
-  // Test modunda local JSON'dan servis bulunur
-  if (IS_TEST_MODE_ENABLED) {
-    const services = getMockServices();
-    return services.find(s => s.id === id) || null;
-  }
-
   const { data, error } = await supabase
     .from("services")
     .select("*")
@@ -75,12 +27,11 @@ export async function getServiceById(id: string): Promise<Service | null> {
   return data;
 }
 
-export async function getProfile(userId: string): Promise<Profile | null> {
-  // Test modunda mock profil döndür - AuthContext zaten handle ediyor
-  if (IS_TEST_MODE_ENABLED) {
-    return null; // AuthContext mock profile yönetir
-  }
+// ============================================
+// Profiles
+// ============================================
 
+export async function getProfile(userId: string): Promise<Profile | null> {
   const { data, error } = await supabase
     .from("profiles")
     .select("*")
@@ -92,17 +43,6 @@ export async function getProfile(userId: string): Promise<Profile | null> {
 }
 
 export async function upsertProfile(profile: Partial<Profile> & { id: string }): Promise<Profile> {
-  // Test modunda mock profil döndür
-  if (IS_TEST_MODE_ENABLED) {
-    return {
-      id: profile.id,
-      phone: profile.phone || "+447777777777",
-      full_name: profile.full_name || "Test User",
-      area: profile.area || "London",
-      created_at: new Date().toISOString(),
-    };
-  }
-
   const { data, error } = await supabase
     .from("profiles")
     .upsert(profile)
@@ -113,12 +53,11 @@ export async function upsertProfile(profile: Partial<Profile> & { id: string }):
   return data;
 }
 
-export async function getAddresses(userId: string): Promise<Address[]> {
-  // Test modunda AsyncStorage'dan adresler yüklenir
-  if (IS_TEST_MODE_ENABLED) {
-    return getTestAddresses();
-  }
+// ============================================
+// Addresses
+// ============================================
 
+export async function getAddresses(userId: string): Promise<Address[]> {
   const { data, error } = await supabase
     .from("addresses")
     .select("*")
@@ -130,12 +69,6 @@ export async function getAddresses(userId: string): Promise<Address[]> {
 }
 
 export async function getDefaultAddress(userId: string): Promise<Address | null> {
-  // Test modunda AsyncStorage'dan varsayılan adres yüklenir
-  if (IS_TEST_MODE_ENABLED) {
-    const addresses = await getTestAddresses();
-    return addresses.find(a => a.is_default) || null;
-  }
-
   const { data, error } = await supabase
     .from("addresses")
     .select("*")
@@ -148,26 +81,6 @@ export async function getDefaultAddress(userId: string): Promise<Address | null>
 }
 
 export async function createAddress(address: Omit<Address, "id" | "created_at">): Promise<Address> {
-  // Test modunda AsyncStorage'a kaydet
-  if (IS_TEST_MODE_ENABLED) {
-    const addresses = await getTestAddresses();
-
-    // Varsayılan adres işaretlenmişse diğerlerini false yap
-    if (address.is_default) {
-      addresses.forEach(a => a.is_default = false);
-    }
-
-    const newAddress: Address = {
-      ...address,
-      id: `mock-address-${Date.now()}`,
-      created_at: new Date().toISOString(),
-    };
-
-    addresses.push(newAddress);
-    await saveTestAddresses(addresses);
-    return newAddress;
-  }
-
   if (address.is_default) {
     await supabase
       .from("addresses")
@@ -186,18 +99,6 @@ export async function createAddress(address: Omit<Address, "id" | "created_at">)
 }
 
 export async function updateAddress(id: string, address: Partial<Address>): Promise<Address> {
-  // Test modunda AsyncStorage'da güncelle
-  if (IS_TEST_MODE_ENABLED) {
-    const addresses = await getTestAddresses();
-    const index = addresses.findIndex(a => a.id === id);
-    if (index !== -1) {
-      addresses[index] = { ...addresses[index], ...address };
-      await saveTestAddresses(addresses);
-      return addresses[index];
-    }
-    throw new Error("Address not found");
-  }
-
   const { data, error } = await supabase
     .from("addresses")
     .update(address)
@@ -209,12 +110,11 @@ export async function updateAddress(id: string, address: Partial<Address>): Prom
   return data;
 }
 
-export async function getBookings(userId: string): Promise<BookingWithDetails[]> {
-  // Test modunda AsyncStorage'dan rezervasyonlar yüklenir
-  if (IS_TEST_MODE_ENABLED) {
-    return getTestBookings();
-  }
+// ============================================
+// Bookings
+// ============================================
 
+export async function getBookings(userId: string): Promise<BookingWithDetails[]> {
   const { data, error } = await supabase
     .from("bookings")
     .select(`
@@ -230,12 +130,6 @@ export async function getBookings(userId: string): Promise<BookingWithDetails[]>
 }
 
 export async function getBookingById(id: string): Promise<BookingWithDetails | null> {
-  // Test modunda AsyncStorage'dan rezervasyon bulunur
-  if (IS_TEST_MODE_ENABLED) {
-    const bookings = await getTestBookings();
-    return bookings.find(b => b.id === id) || null;
-  }
-
   const { data, error } = await supabase
     .from("bookings")
     .select(`
@@ -251,29 +145,6 @@ export async function getBookingById(id: string): Promise<BookingWithDetails | n
 }
 
 export async function createBooking(booking: Omit<Booking, "id" | "created_at" | "updated_at">): Promise<Booking> {
-  // Test modunda AsyncStorage'a kaydet
-  if (IS_TEST_MODE_ENABLED) {
-    const bookings = await getTestBookings();
-    const services = getMockServices();
-    const addresses = await getTestAddresses();
-
-    const service = services.find(s => s.id === booking.service_id);
-    const address = addresses.find(a => a.id === booking.address_id);
-
-    const newBooking: BookingWithDetails = {
-      ...booking,
-      id: `mock-booking-${Date.now()}`,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      service: service!,
-      address: address!,
-    };
-
-    bookings.push(newBooking);
-    await saveTestBookings(bookings);
-    return newBooking;
-  }
-
   const { data, error } = await supabase
     .from("bookings")
     .insert(booking)
@@ -285,23 +156,6 @@ export async function createBooking(booking: Omit<Booking, "id" | "created_at" |
 }
 
 export async function cancelBooking(id: string, cancelReason?: string): Promise<Booking> {
-  // Test modunda AsyncStorage'da güncelle
-  if (IS_TEST_MODE_ENABLED) {
-    const bookings = await getTestBookings();
-    const index = bookings.findIndex(b => b.id === id);
-    if (index !== -1) {
-      bookings[index] = {
-        ...bookings[index],
-        status: "canceled",
-        cancel_reason: cancelReason || null,
-        updated_at: new Date().toISOString(),
-      };
-      await saveTestBookings(bookings);
-      return bookings[index];
-    }
-    throw new Error("Booking not found");
-  }
-
   const { data, error } = await supabase
     .from("bookings")
     .update({

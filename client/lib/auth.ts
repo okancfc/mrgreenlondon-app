@@ -112,3 +112,19 @@ export async function resetPassword(email: string): Promise<void> {
     throw error;
   }
 }
+
+/**
+ * Delete current user's account and all related data
+ * This calls a Supabase RPC function that handles cascade deletion
+ */
+export async function deleteAccount(): Promise<void> {
+  // First delete user data via RPC (profiles, addresses, bookings)
+  const { error: rpcError } = await supabase.rpc("delete_user_account");
+
+  if (rpcError) {
+    throw rpcError;
+  }
+
+  // Then sign out
+  await signOut();
+}

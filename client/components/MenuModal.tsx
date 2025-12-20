@@ -5,10 +5,12 @@ import {
     StyleSheet,
     TouchableOpacity,
     ScrollView,
+    Linking,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
+import { Card } from "@/components/Card";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
 
@@ -20,6 +22,7 @@ interface MenuModalProps {
 interface MenuItem {
     icon: keyof typeof Feather.glyphMap;
     label: string;
+    subtitle?: string;
     onPress: () => void;
 }
 
@@ -27,50 +30,47 @@ export function MenuModal({ visible, onClose }: MenuModalProps) {
     const insets = useSafeAreaInsets();
     const { theme } = useTheme();
 
-    const menuItems: MenuItem[] = [
-        {
-            icon: "home",
-            label: "Ana Sayfa",
-            onPress: () => {
-                onClose();
-            },
-        },
-        {
-            icon: "calendar",
-            label: "Rezervasyonlarım",
-            onPress: () => {
-                onClose();
-            },
-        },
-        {
-            icon: "user",
-            label: "Profilim",
-            onPress: () => {
-                onClose();
-            },
-        },
-        {
-            icon: "settings",
-            label: "Ayarlar",
-            onPress: () => {
-                onClose();
-            },
-        },
-        {
-            icon: "help-circle",
-            label: "Yardım & Destek",
-            onPress: () => {
-                onClose();
-            },
-        },
-        {
-            icon: "info",
-            label: "Hakkında",
-            onPress: () => {
-                onClose();
-            },
-        },
-    ];
+    const handleOpenEmail = async () => {
+        const email = "support@mrgreen.app";
+        const url = `mailto:${email}`;
+        const canOpen = await Linking.canOpenURL(url);
+        if (canOpen) {
+            await Linking.openURL(url);
+        }
+        onClose();
+    };
+
+    const handleOpenWhatsApp = async () => {
+        const url = "https://wa.me/447000000000";
+        const canOpen = await Linking.canOpenURL(url);
+        if (canOpen) {
+            await Linking.openURL(url);
+        }
+        onClose();
+    };
+
+    const handleOpenPrivacyPolicy = async () => {
+        const url = "https://mrgreen.app/privacy";
+        const canOpen = await Linking.canOpenURL(url);
+        if (canOpen) {
+            await Linking.openURL(url);
+        }
+        onClose();
+    };
+
+    const handleOpenTerms = async () => {
+        const url = "https://mrgreen.app/terms";
+        const canOpen = await Linking.canOpenURL(url);
+        if (canOpen) {
+            await Linking.openURL(url);
+        }
+        onClose();
+    };
+
+    const handleOpenAbout = () => {
+        // Could navigate to about screen or show info
+        onClose();
+    };
 
     return (
         <Modal
@@ -84,14 +84,14 @@ export function MenuModal({ visible, onClose }: MenuModalProps) {
                 <View style={[styles.header, { borderBottomColor: theme.border }]}>
                     <View style={styles.headerLeft} />
                     <ThemedText type="h4" style={styles.headerTitle}>
-                        Menü
+                        Menu
                     </ThemedText>
                     <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                        <Feather name="x-circle" size={28} color={theme.textSecondary} />
+                        <Feather name="x" size={24} color={theme.text} />
                     </TouchableOpacity>
                 </View>
 
-                {/* Menu Items */}
+                {/* Content */}
                 <ScrollView
                     style={styles.scrollView}
                     contentContainerStyle={[
@@ -100,25 +100,112 @@ export function MenuModal({ visible, onClose }: MenuModalProps) {
                     ]}
                     showsVerticalScrollIndicator={false}
                 >
-                    {menuItems.map((item, index) => (
+                    {/* Support Section */}
+                    <ThemedText type="small" style={[styles.sectionLabel, { color: theme.textSecondary }]}>
+                        SUPPORT
+                    </ThemedText>
+                    <Card style={styles.sectionCard}>
                         <TouchableOpacity
-                            key={index}
-                            style={[
-                                styles.menuItem,
-                                { backgroundColor: theme.backgroundDefault },
-                            ]}
-                            onPress={item.onPress}
+                            style={styles.menuItem}
+                            onPress={handleOpenWhatsApp}
                             activeOpacity={0.7}
                         >
-                            <View style={[styles.iconContainer, { backgroundColor: theme.brandGreen }]}>
-                                <Feather name={item.icon} size={20} color="#FFFFFF" />
+                            <View style={[styles.iconContainer, { backgroundColor: "#25D366" + "15" }]}>
+                                <Feather name="message-circle" size={20} color="#25D366" />
                             </View>
-                            <ThemedText type="body" style={styles.menuLabel}>
-                                {item.label}
-                            </ThemedText>
+                            <View style={styles.menuItemContent}>
+                                <ThemedText type="body">WhatsApp</ThemedText>
+                                <ThemedText type="small" style={{ color: theme.textSecondary }}>
+                                    Chat with us
+                                </ThemedText>
+                            </View>
                             <Feather name="chevron-right" size={20} color={theme.textSecondary} />
                         </TouchableOpacity>
-                    ))}
+
+                        <View style={[styles.divider, { backgroundColor: theme.border }]} />
+
+                        <TouchableOpacity
+                            style={styles.menuItem}
+                            onPress={handleOpenEmail}
+                            activeOpacity={0.7}
+                        >
+                            <View style={[styles.iconContainer, { backgroundColor: theme.brandGreen + "15" }]}>
+                                <Feather name="mail" size={20} color={theme.brandGreen} />
+                            </View>
+                            <View style={styles.menuItemContent}>
+                                <ThemedText type="body">Email</ThemedText>
+                                <ThemedText type="small" style={{ color: theme.textSecondary }}>
+                                    support@mrgreen.app
+                                </ThemedText>
+                            </View>
+                            <Feather name="chevron-right" size={20} color={theme.textSecondary} />
+                        </TouchableOpacity>
+                    </Card>
+
+                    {/* About & Legal Section */}
+                    <ThemedText type="small" style={[styles.sectionLabel, { color: theme.textSecondary }]}>
+                        ABOUT & LEGAL
+                    </ThemedText>
+                    <Card style={styles.sectionCard}>
+                        <TouchableOpacity
+                            style={styles.menuItem}
+                            onPress={handleOpenAbout}
+                            activeOpacity={0.7}
+                        >
+                            <View style={[styles.iconContainer, { backgroundColor: theme.brandGreen + "15" }]}>
+                                <Feather name="info" size={20} color={theme.brandGreen} />
+                            </View>
+                            <View style={styles.menuItemContent}>
+                                <ThemedText type="body">About MrGreen</ThemedText>
+                                <ThemedText type="small" style={{ color: theme.textSecondary }}>
+                                    Version 1.0.0
+                                </ThemedText>
+                            </View>
+                            <Feather name="chevron-right" size={20} color={theme.textSecondary} />
+                        </TouchableOpacity>
+
+                        <View style={[styles.divider, { backgroundColor: theme.border }]} />
+
+                        <TouchableOpacity
+                            style={styles.menuItem}
+                            onPress={handleOpenPrivacyPolicy}
+                            activeOpacity={0.7}
+                        >
+                            <View style={[styles.iconContainer, { backgroundColor: theme.brandGreen + "15" }]}>
+                                <Feather name="shield" size={20} color={theme.brandGreen} />
+                            </View>
+                            <View style={styles.menuItemContent}>
+                                <ThemedText type="body">Privacy Policy</ThemedText>
+                            </View>
+                            <Feather name="external-link" size={18} color={theme.textSecondary} />
+                        </TouchableOpacity>
+
+                        <View style={[styles.divider, { backgroundColor: theme.border }]} />
+
+                        <TouchableOpacity
+                            style={styles.menuItem}
+                            onPress={handleOpenTerms}
+                            activeOpacity={0.7}
+                        >
+                            <View style={[styles.iconContainer, { backgroundColor: theme.brandGreen + "15" }]}>
+                                <Feather name="file-text" size={20} color={theme.brandGreen} />
+                            </View>
+                            <View style={styles.menuItemContent}>
+                                <ThemedText type="body">Terms of Use</ThemedText>
+                            </View>
+                            <Feather name="external-link" size={18} color={theme.textSecondary} />
+                        </TouchableOpacity>
+                    </Card>
+
+                    {/* Footer */}
+                    <View style={styles.footer}>
+                        <ThemedText type="small" style={{ color: theme.textSecondary, textAlign: "center" }}>
+                            © 2024 MrGreen London
+                        </ThemedText>
+                        <ThemedText type="small" style={{ color: theme.textSecondary, textAlign: "center" }}>
+                            Professional Garden Services
+                        </ThemedText>
+                    </View>
                 </ScrollView>
             </View>
         </Modal>
@@ -146,21 +233,30 @@ const styles = StyleSheet.create({
     },
     closeButton: {
         width: 40,
-        alignItems: "flex-end",
+        height: 40,
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 20,
     },
     scrollView: {
         flex: 1,
     },
     scrollContent: {
         padding: Spacing.lg,
-        gap: Spacing.sm,
+    },
+    sectionLabel: {
+        marginBottom: Spacing.sm,
+        marginLeft: Spacing.xs,
+        fontWeight: "600",
+        letterSpacing: 0.5,
+    },
+    sectionCard: {
+        marginBottom: Spacing.xl,
     },
     menuItem: {
         flexDirection: "row",
         alignItems: "center",
-        paddingVertical: Spacing.lg,
-        paddingHorizontal: Spacing.lg,
-        borderRadius: BorderRadius.md,
+        paddingVertical: Spacing.md,
     },
     iconContainer: {
         width: 40,
@@ -168,9 +264,18 @@ const styles = StyleSheet.create({
         borderRadius: BorderRadius.sm,
         alignItems: "center",
         justifyContent: "center",
-        marginRight: Spacing.lg,
+        marginRight: Spacing.md,
     },
-    menuLabel: {
+    menuItemContent: {
         flex: 1,
+    },
+    divider: {
+        height: 1,
+        marginLeft: 56,
+    },
+    footer: {
+        marginTop: Spacing.xl,
+        alignItems: "center",
+        gap: Spacing.xs,
     },
 });

@@ -16,6 +16,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/context/AuthContext";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { upsertProfile } from "@/lib/api";
+import { deleteAccount } from "@/lib/auth";
 import { handlePhoneInput, isValidUKPhoneNumber, formatUKPhoneNumber } from "@/lib/phone";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
@@ -50,6 +51,31 @@ export default function ProfileScreen() {
         },
       },
     ]);
+  };
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      "Delete Account",
+      "Are you sure you want to permanently delete your account? This action cannot be undone. All your data including bookings, addresses, and profile information will be deleted.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete Account",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await deleteAccount();
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "SignIn" }],
+              });
+            } catch (error: any) {
+              Alert.alert("Error", error.message || "Failed to delete account. Please try again.");
+            }
+          },
+        },
+      ]
+    );
   };
 
   const handleSaveProfile = async () => {
@@ -237,6 +263,14 @@ export default function ProfileScreen() {
       <Button onPress={handleSignOut} style={styles.signOutButton}>
         Sign Out
       </Button>
+
+      <Button
+        onPress={handleDeleteAccount}
+        style={styles.deleteAccountButton}
+        textColor="#DC2626"
+      >
+        Delete Account
+      </Button>
     </KeyboardAwareScrollViewCompat>
   );
 }
@@ -328,5 +362,12 @@ const styles = StyleSheet.create({
   },
   signOutButton: {
     backgroundColor: "#DC2626",
+  },
+  deleteAccountButton: {
+    backgroundColor: "transparent",
+    borderWidth: 1,
+    borderColor: "#DC2626",
+    marginTop: Spacing.md,
+    marginBottom: Spacing["3xl"],
   },
 });

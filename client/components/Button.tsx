@@ -17,6 +17,7 @@ interface ButtonProps {
   style?: StyleProp<ViewStyle>;
   disabled?: boolean;
   variant?: "primary" | "secondary" | "outline";
+  textColor?: string;
 }
 
 const springConfig: WithSpringConfig = {
@@ -35,6 +36,7 @@ export function Button({
   style,
   disabled = false,
   variant = "primary",
+  textColor,
 }: ButtonProps) {
   const { theme } = useTheme();
   const scale = useSharedValue(1);
@@ -62,6 +64,7 @@ export function Button({
   };
 
   const getTextColor = () => {
+    if (textColor) return textColor;
     if (variant === "outline") return theme.brandGreen;
     if (variant === "secondary") return theme.text;
     return "#FFFFFF";

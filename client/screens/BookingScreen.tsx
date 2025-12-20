@@ -19,6 +19,7 @@ import { Spacing, BorderRadius } from "@/constants/theme";
 import { getServiceById, getDefaultAddress, createAddress, createBooking } from "@/lib/api";
 import { Service, Address, TIME_WINDOWS } from "@/lib/types";
 import { queryClient } from "@/lib/query-client";
+import { handlePhoneInput, isValidUKPhoneNumber } from "@/lib/phone";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -34,6 +35,13 @@ const addressSchema = z.object({
     .regex(
       /^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$/i,
       "Please enter a valid UK postcode"
+    ),
+  phone: z
+    .string()
+    .min(1, "Phone number is required")
+    .refine(
+      (val) => isValidUKPhoneNumber(val),
+      "Please enter a valid UK phone number (+44 7XXX XXX XXX)"
     ),
   notes: z.string().optional(),
 });
@@ -72,6 +80,7 @@ export default function BookingScreen() {
       line2: "",
       city: "London",
       postcode: "",
+      phone: "",
       notes: "",
     },
   });
@@ -298,6 +307,23 @@ export default function BookingScreen() {
             onBlur={onBlur}
             error={errors.postcode?.message}
             autoCapitalize="characters"
+          />
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="phone"
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextField
+            label="Phone Number *"
+            placeholder="+44 7XXX XXX XXX"
+            icon="phone"
+            value={value}
+            onChangeText={(text) => onChange(handlePhoneInput(text, value || ""))}
+            onBlur={onBlur}
+            error={errors.phone?.message}
+            keyboardType="phone-pad"
           />
         )}
       />

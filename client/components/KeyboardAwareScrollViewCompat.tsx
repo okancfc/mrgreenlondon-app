@@ -13,12 +13,16 @@ type Props = KeyboardAwareScrollViewProps & ScrollViewProps;
 export function KeyboardAwareScrollViewCompat({
   children,
   keyboardShouldPersistTaps = "handled",
+  showsVerticalScrollIndicator = false,
+  showsHorizontalScrollIndicator = false,
   ...props
 }: Props) {
   if (Platform.OS === "web") {
     return (
       <ScrollView
         keyboardShouldPersistTaps={keyboardShouldPersistTaps}
+        showsVerticalScrollIndicator={showsVerticalScrollIndicator}
+        showsHorizontalScrollIndicator={showsHorizontalScrollIndicator}
         {...props}
       >
         {children}
@@ -29,6 +33,8 @@ export function KeyboardAwareScrollViewCompat({
   return (
     <KeyboardAwareScrollView
       keyboardShouldPersistTaps={keyboardShouldPersistTaps}
+      showsVerticalScrollIndicator={showsVerticalScrollIndicator}
+      showsHorizontalScrollIndicator={showsHorizontalScrollIndicator}
       {...props}
     >
       {children}

@@ -16,6 +16,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/context/AuthContext";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { upsertProfile } from "@/lib/api";
+import { handlePhoneInput, isValidUKPhoneNumber, formatUKPhoneNumber } from "@/lib/phone";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -31,6 +32,7 @@ export default function ProfileScreen() {
   const [isEditing, setIsEditing] = useState(false);
   const [fullName, setFullName] = useState(profile?.full_name || "");
   const [area, setArea] = useState(profile?.area || "");
+  const [phone, setPhone] = useState(profile?.phone || "");
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSignOut = () => {
@@ -53,11 +55,18 @@ export default function ProfileScreen() {
   const handleSaveProfile = async () => {
     if (!user?.id) return;
 
+    // Validate phone if provided
+    if (phone && phone !== "" && !isValidUKPhoneNumber(phone)) {
+      Alert.alert("Invalid Phone", "Please enter a valid UK phone number (+44 7XXX XXX XXX)");
+      return;
+    }
+
     setIsSaving(true);
     try {
       await upsertProfile({
         id: user.id,
-        phone: profile?.phone || user.phone || "",
+        email: profile?.email || user.email || null,
+        phone: phone || null,
         full_name: fullName || null,
         area: area || null,
       });
@@ -129,6 +138,14 @@ export default function ProfileScreen() {
               value={fullName}
               onChangeText={setFullName}
             />
+            <TextField
+              label="Phone Number"
+              placeholder="+44 7XXX XXX XXX"
+              icon="phone"
+              value={phone}
+              onChangeText={(text) => setPhone(handlePhoneInput(text, phone))}
+              keyboardType="phone-pad"
+            />
             <ThemedText type="small" style={[styles.areaLabel, { color: theme.textSecondary }]}>
               Area
             </ThemedText>
@@ -139,8 +156,10 @@ export default function ProfileScreen() {
                   setIsEditing(false);
                   setFullName(profile?.full_name || "");
                   setArea(profile?.area || "");
+                  setPhone(profile?.phone || "");
                 }}
                 style={[styles.cancelButton, { backgroundColor: theme.backgroundSecondary }]}
+                textColor={theme.brandGreen}
               >
                 Cancel
               </Button>
@@ -160,6 +179,14 @@ export default function ProfileScreen() {
                 <Feather name="map-pin" size={16} color={theme.textSecondary} />
                 <ThemedText type="body" style={{ color: theme.textSecondary }}>
                   {profile.area} London
+                </ThemedText>
+              </View>
+            ) : null}
+            {profile?.phone ? (
+              <View style={styles.detailRow}>
+                <Feather name="phone" size={16} color={theme.textSecondary} />
+                <ThemedText type="body" style={{ color: theme.textSecondary }}>
+                  {profile.phone}
                 </ThemedText>
               </View>
             ) : null}

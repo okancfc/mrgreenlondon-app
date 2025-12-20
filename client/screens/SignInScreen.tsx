@@ -70,6 +70,7 @@ export default function SignInScreen() {
                     paddingBottom: insets.bottom + Spacing.xl,
                 },
             ]}
+            showsVerticalScrollIndicator={false}
         >
             <View style={styles.header}>
                 <Image
@@ -96,6 +97,7 @@ export default function SignInScreen() {
                         <TextField
                             label="Email"
                             placeholder="you@example.com"
+                            icon="mail"
                             keyboardType="email-address"
                             autoCapitalize="none"
                             autoComplete="email"
@@ -114,7 +116,9 @@ export default function SignInScreen() {
                         <TextField
                             label="Password"
                             placeholder="Enter your password"
+                            icon="lock"
                             secureTextEntry
+                            showPasswordToggle
                             autoComplete="password"
                             value={value}
                             onChangeText={onChange}

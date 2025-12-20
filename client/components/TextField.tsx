@@ -1,11 +1,13 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useState } from "react";
 import {
   View,
   TextInput,
   TextInputProps,
   StyleSheet,
   ViewStyle,
+  Pressable,
 } from "react-native";
+import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
@@ -15,11 +17,16 @@ interface TextFieldProps extends TextInputProps {
   error?: string;
   containerStyle?: ViewStyle;
   prefix?: string;
+  icon?: keyof typeof Feather.glyphMap;
+  showPasswordToggle?: boolean;
 }
 
 export const TextField = forwardRef<TextInput, TextFieldProps>(
-  ({ label, error, containerStyle, prefix, style, multiline, ...props }, ref) => {
+  ({ label, error, containerStyle, prefix, icon, showPasswordToggle, style, multiline, secureTextEntry, ...props }, ref) => {
     const { theme } = useTheme();
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+    const isSecure = secureTextEntry && !isPasswordVisible;
 
     return (
       <View style={[styles.container, containerStyle]}>
@@ -41,6 +48,14 @@ export const TextField = forwardRef<TextInput, TextFieldProps>(
             multiline ? styles.inputContainerMultiline : null,
           ]}
         >
+          {icon ? (
+            <Feather
+              name={icon}
+              size={20}
+              color={theme.textSecondary}
+              style={styles.icon}
+            />
+          ) : null}
           {prefix ? (
             <ThemedText style={styles.prefix}>{prefix}</ThemedText>
           ) : null}
@@ -49,14 +64,28 @@ export const TextField = forwardRef<TextInput, TextFieldProps>(
             style={[
               styles.input,
               { color: theme.text },
-              prefix ? styles.inputWithPrefix : null,
+              (prefix || icon) ? styles.inputWithPrefix : null,
               multiline ? styles.inputMultiline : null,
               style,
             ]}
             placeholderTextColor={theme.textSecondary}
             multiline={multiline}
+            secureTextEntry={isSecure}
             {...props}
           />
+          {showPasswordToggle && secureTextEntry ? (
+            <Pressable
+              onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+              style={styles.toggleButton}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <Feather
+                name={isPasswordVisible ? "eye-off" : "eye"}
+                size={20}
+                color={theme.textSecondary}
+              />
+            </Pressable>
+          ) : null}
         </View>
         {error ? (
           <ThemedText
@@ -94,6 +123,9 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     paddingVertical: Spacing.md,
   },
+  icon: {
+    marginRight: Spacing.sm,
+  },
   prefix: {
     marginRight: Spacing.sm,
     fontWeight: "500",
@@ -111,6 +143,10 @@ const styles = StyleSheet.create({
   },
   inputWithPrefix: {
     paddingLeft: 0,
+  },
+  toggleButton: {
+    padding: Spacing.xs,
+    marginLeft: Spacing.sm,
   },
   error: {
     marginTop: Spacing.xs,

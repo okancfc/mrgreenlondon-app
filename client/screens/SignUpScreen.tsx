@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Alert, Image, Pressable } from "react-native";
+import { View, StyleSheet, Alert, Image, Pressable, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -9,11 +9,11 @@ import { z } from "zod";
 import { ThemedText } from "@/components/ThemedText";
 import { TextField } from "@/components/TextField";
 import { Button } from "@/components/Button";
-import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing } from "@/constants/theme";
 import { signUp } from "@/lib/auth";
 import { upsertProfile } from "@/lib/api";
+import { handlePhoneInput, isValidUKPhoneNumber, getCleanPhoneNumber } from "@/lib/phone";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -22,6 +22,10 @@ const signUpSchema = z
     .object({
         fullName: z.string().min(2, "Please enter your full name"),
         email: z.string().email("Please enter a valid email address"),
+        phone: z.string().optional().refine(
+            (val) => !val || val === "" || isValidUKPhoneNumber(val),
+            "Please enter a valid UK phone number (+44 7XXX XXX XXX)"
+        ),
         password: z.string().min(6, "Password must be at least 6 characters"),
         confirmPassword: z.string(),
     })
@@ -47,6 +51,7 @@ export default function SignUpScreen() {
         defaultValues: {
             fullName: "",
             email: "",
+            phone: "",
             password: "",
             confirmPassword: "",
         },
@@ -62,7 +67,7 @@ export default function SignUpScreen() {
                 await upsertProfile({
                     id: result.user.id,
                     email: data.email,
-                    phone: null,
+                    phone: data.phone || null,
                     full_name: data.fullName,
                     area: null,
                 });
@@ -84,102 +89,135 @@ export default function SignUpScreen() {
     };
 
     return (
-        <KeyboardAwareScrollViewCompat
+        <KeyboardAvoidingView
             style={[styles.container, { backgroundColor: theme.backgroundRoot }]}
-            contentContainerStyle={[
-                styles.content,
-                {
-                    paddingTop: insets.top + Spacing["3xl"],
-                    paddingBottom: insets.bottom + Spacing.xl,
-                },
-            ]}
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
         >
-            <View style={styles.header}>
-                <Image
-                    source={require("../../assets/images/header-logo.png")}
-                    style={styles.logo}
-                    resizeMode="contain"
-                />
-                <ThemedText type="h2" style={styles.title}>
-                    Create Account
-                </ThemedText>
-                <ThemedText
-                    type="body"
-                    style={[styles.subtitle, { color: theme.textSecondary }]}
-                >
-                    Sign up to get started with MrGreen
-                </ThemedText>
-            </View>
+            <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={[
+                    styles.scrollContent,
+                    {
+                        paddingTop: insets.top + Spacing["5xl"],
+                    },
+                ]}
+                showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
+            >
+                <View style={styles.header}>
+                    <Image
+                        source={require("../../assets/images/header-logo.png")}
+                        style={styles.logo}
+                        resizeMode="contain"
+                    />
+                    <ThemedText type="h2" style={styles.title}>
+                        Create Account
+                    </ThemedText>
+                    <ThemedText
+                        type="body"
+                        style={[styles.subtitle, { color: theme.textSecondary }]}
+                    >
+                        Sign up to get started with MrGreen
+                    </ThemedText>
+                </View>
 
-            <View style={styles.form}>
-                <Controller
-                    control={control}
-                    name="fullName"
-                    render={({ field: { onChange, onBlur, value } }) => (
-                        <TextField
-                            label="Full Name"
-                            placeholder="John Doe"
-                            autoComplete="name"
-                            value={value}
-                            onChangeText={onChange}
-                            onBlur={onBlur}
-                            error={errors.fullName?.message}
-                        />
-                    )}
-                />
+                <View style={styles.form}>
+                    <Controller
+                        control={control}
+                        name="fullName"
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <TextField
+                                label="Full Name"
+                                placeholder="Your full name"
+                                icon="user"
+                                autoComplete="name"
+                                value={value}
+                                onChangeText={onChange}
+                                onBlur={onBlur}
+                                error={errors.fullName?.message}
+                            />
+                        )}
+                    />
 
-                <Controller
-                    control={control}
-                    name="email"
-                    render={({ field: { onChange, onBlur, value } }) => (
-                        <TextField
-                            label="Email"
-                            placeholder="you@example.com"
-                            keyboardType="email-address"
-                            autoCapitalize="none"
-                            autoComplete="email"
-                            value={value}
-                            onChangeText={onChange}
-                            onBlur={onBlur}
-                            error={errors.email?.message}
-                        />
-                    )}
-                />
+                    <Controller
+                        control={control}
+                        name="email"
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <TextField
+                                label="Email"
+                                placeholder="you@example.com"
+                                icon="mail"
+                                keyboardType="email-address"
+                                autoCapitalize="none"
+                                autoComplete="email"
+                                value={value}
+                                onChangeText={onChange}
+                                onBlur={onBlur}
+                                error={errors.email?.message}
+                            />
+                        )}
+                    />
 
-                <Controller
-                    control={control}
-                    name="password"
-                    render={({ field: { onChange, onBlur, value } }) => (
-                        <TextField
-                            label="Password"
-                            placeholder="Create a password"
-                            secureTextEntry
-                            autoComplete="new-password"
-                            value={value}
-                            onChangeText={onChange}
-                            onBlur={onBlur}
-                            error={errors.password?.message}
-                        />
-                    )}
-                />
+                    <Controller
+                        control={control}
+                        name="phone"
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <TextField
+                                label="Phone Number (Optional)"
+                                placeholder="+44 7XXX XXX XXX"
+                                icon="phone"
+                                keyboardType="phone-pad"
+                                value={value}
+                                onChangeText={(text) => onChange(handlePhoneInput(text, value || ""))}
+                                onBlur={onBlur}
+                                error={errors.phone?.message}
+                            />
+                        )}
+                    />
 
-                <Controller
-                    control={control}
-                    name="confirmPassword"
-                    render={({ field: { onChange, onBlur, value } }) => (
-                        <TextField
-                            label="Confirm Password"
-                            placeholder="Confirm your password"
-                            secureTextEntry
-                            autoComplete="new-password"
-                            value={value}
-                            onChangeText={onChange}
-                            onBlur={onBlur}
-                            error={errors.confirmPassword?.message}
-                        />
-                    )}
-                />
+                    <Controller
+                        control={control}
+                        name="password"
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <TextField
+                                label="Password"
+                                placeholder="Create a password"
+                                icon="lock"
+                                secureTextEntry
+                                showPasswordToggle
+                                autoComplete="new-password"
+                                value={value}
+                                onChangeText={onChange}
+                                onBlur={onBlur}
+                                error={errors.password?.message}
+                            />
+                        )}
+                    />
 
+                    <Controller
+                        control={control}
+                        name="confirmPassword"
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <TextField
+                                label="Confirm Password"
+                                placeholder="Confirm your password"
+                                icon="lock"
+                                secureTextEntry
+                                showPasswordToggle
+                                autoComplete="new-password"
+                                value={value}
+                                onChangeText={onChange}
+                                onBlur={onBlur}
+                                error={errors.confirmPassword?.message}
+                            />
+                        )}
+                    />
+
+                </View>
+            </ScrollView>
+
+            {/* Fixed Bottom Section */}
+            <View style={[styles.bottomContainer, { paddingBottom: insets.bottom + Spacing.lg }]}>
                 <Button
                     onPress={handleSubmit(onSubmit)}
                     disabled={isLoading}
@@ -199,7 +237,7 @@ export default function SignUpScreen() {
                     </Pressable>
                 </View>
             </View>
-        </KeyboardAwareScrollViewCompat>
+        </KeyboardAvoidingView>
     );
 }
 
@@ -207,9 +245,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    content: {
-        flexGrow: 1,
+    scrollView: {
+        flex: 1,
+    },
+    scrollContent: {
         paddingHorizontal: Spacing.xl,
+        paddingBottom: Spacing.xl,
     },
     header: {
         alignItems: "center",
@@ -228,17 +269,21 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     form: {
-        flex: 1,
         gap: Spacing.sm,
-    },
-    button: {
-        marginTop: Spacing.md,
-        backgroundColor: "#0A3E12",
     },
     signinContainer: {
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-        marginTop: Spacing.xl,
+        marginTop: Spacing.md,
+    },
+    bottomContainer: {
+        paddingHorizontal: Spacing.xl,
+        paddingTop: Spacing.lg,
+        borderTopWidth: 1,
+        borderTopColor: "rgba(0,0,0,0.05)",
+    },
+    button: {
+        backgroundColor: "#0A3E12",
     },
 });

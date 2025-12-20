@@ -98,6 +98,7 @@ export function MenuModal({ visible, onClose }: MenuModalProps) {
                         styles.scrollContent,
                         { paddingBottom: insets.bottom + Spacing.xl },
                     ]}
+                    showsVerticalScrollIndicator={false}
                 >
                     {menuItems.map((item, index) => (
                         <TouchableOpacity

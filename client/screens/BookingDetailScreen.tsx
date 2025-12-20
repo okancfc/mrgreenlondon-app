@@ -141,6 +141,7 @@ export default function BookingDetailScreen() {
           paddingBottom: insets.bottom + Spacing.xl,
         },
       ]}
+      showsVerticalScrollIndicator={false}
     >
       <View style={styles.header}>
         <Pressable onPress={handleBack} style={styles.backButton}>

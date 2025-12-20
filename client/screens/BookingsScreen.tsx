@@ -176,6 +176,7 @@ export default function BookingsScreen() {
         !filteredBookings.length && !isLoading ? styles.emptyContent : null,
       ]}
       scrollIndicatorInsets={{ bottom: insets.bottom }}
+      showsVerticalScrollIndicator={false}
       data={filteredBookings}
       renderItem={renderBooking}
       keyExtractor={(item) => item.id}

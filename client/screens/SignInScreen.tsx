@@ -27,7 +27,7 @@ type FormData = z.infer<typeof signInSchema>;
 export default function SignInScreen() {
     const insets = useSafeAreaInsets();
     const navigation = useNavigation<NavigationProp>();
-    const { theme } = useTheme();
+    const { theme, isDark } = useTheme();
     const [isLoading, setIsLoading] = useState(false);
 
     const {
@@ -74,7 +74,7 @@ export default function SignInScreen() {
         >
             <View style={styles.header}>
                 <Image
-                    source={require("../../assets/images/header-logo.png")}
+                    source={isDark ? require("../../assets/images/header-logo-dark.png") : require("../../assets/images/header-logo.png")}
                     style={styles.logo}
                     resizeMode="contain"
                 />

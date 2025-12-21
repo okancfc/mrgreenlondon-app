@@ -49,7 +49,7 @@ const howItWorksSteps = [
 export default function OnboardingScreen() {
     const insets = useSafeAreaInsets();
     const navigation = useNavigation<NavigationProp>();
-    const { theme } = useTheme();
+    const { theme, isDark } = useTheme();
     const { setOnboardingComplete } = useAuth();
 
     const [currentPage, setCurrentPage] = useState(0);
@@ -120,7 +120,7 @@ export default function OnboardingScreen() {
             <View style={styles.pageContent}>
                 <View style={[styles.illustrationContainer, { backgroundColor: theme.brandGreen + "15" }]}>
                     <Image
-                        source={require("../../assets/images/header-logo.png")}
+                        source={isDark ? require("../../assets/images/header-logo-dark.png") : require("../../assets/images/header-logo.png")}
                         style={styles.illustration}
                         resizeMode="contain"
                     />

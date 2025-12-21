@@ -1,11 +1,14 @@
 import React from "react";
 import { View, StyleSheet, Image } from "react-native";
+import { useTheme } from "@/hooks/useTheme";
 
 export function HeaderLogo() {
+  const { isDark } = useTheme();
+
   return (
     <View style={styles.container}>
       <Image
-        source={require("../../assets/images/header-logo.png")}
+        source={isDark ? require("../../assets/images/header-logo-dark.png") : require("../../assets/images/header-logo.png")}
         style={styles.logo}
         resizeMode="contain"
       />

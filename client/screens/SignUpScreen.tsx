@@ -39,7 +39,7 @@ type FormData = z.infer<typeof signUpSchema>;
 export default function SignUpScreen() {
     const insets = useSafeAreaInsets();
     const navigation = useNavigation<NavigationProp>();
-    const { theme } = useTheme();
+    const { theme, isDark } = useTheme();
     const [isLoading, setIsLoading] = useState(false);
 
     const {
@@ -106,7 +106,7 @@ export default function SignUpScreen() {
             >
                 <View style={styles.header}>
                     <Image
-                        source={require("../../assets/images/header-logo.png")}
+                        source={isDark ? require("../../assets/images/header-logo-dark.png") : require("../../assets/images/header-logo.png")}
                         style={styles.logo}
                         resizeMode="contain"
                     />

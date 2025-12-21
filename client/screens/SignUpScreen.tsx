@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Alert, Image, Pressable, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
+import { View, StyleSheet, Alert, Image, Pressable, ScrollView, KeyboardAvoidingView, Platform, Linking } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -218,6 +218,25 @@ export default function SignUpScreen() {
 
             {/* Fixed Bottom Section */}
             <View style={[styles.bottomContainer, { paddingBottom: insets.bottom + Spacing.lg }]}>
+                <ThemedText type="small" style={[styles.legalText, { color: theme.textSecondary }]}>
+                    By creating an account, you agree to our{" "}
+                    <ThemedText
+                        type="small"
+                        style={{ color: theme.brandGreen }}
+                        onPress={() => Linking.openURL("https://sites.google.com/view/mrgreenlondon/terms-of-use")}
+                    >
+                        Terms of Use
+                    </ThemedText>
+                    {" "}and{" "}
+                    <ThemedText
+                        type="small"
+                        style={{ color: theme.brandGreen }}
+                        onPress={() => Linking.openURL("https://sites.google.com/view/mrgreenlondon/privacy-policy")}
+                    >
+                        Privacy Policy
+                    </ThemedText>
+                </ThemedText>
+
                 <Button
                     onPress={handleSubmit(onSubmit)}
                     disabled={isLoading}
@@ -282,6 +301,11 @@ const styles = StyleSheet.create({
         paddingTop: Spacing.lg,
         borderTopWidth: 1,
         borderTopColor: "rgba(0,0,0,0.05)",
+    },
+    legalText: {
+        textAlign: "center",
+        marginBottom: Spacing.lg,
+        lineHeight: 18,
     },
     button: {
         backgroundColor: "#0A3E12",

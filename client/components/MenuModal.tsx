@@ -50,7 +50,7 @@ export function MenuModal({ visible, onClose }: MenuModalProps) {
     };
 
     const handleOpenPrivacyPolicy = async () => {
-        const url = "https://mrgreen.app/privacy";
+        const url = "https://sites.google.com/view/mrgreenlondon/privacy-policy";
         const canOpen = await Linking.canOpenURL(url);
         if (canOpen) {
             await Linking.openURL(url);
@@ -59,7 +59,7 @@ export function MenuModal({ visible, onClose }: MenuModalProps) {
     };
 
     const handleOpenTerms = async () => {
-        const url = "https://mrgreen.app/terms";
+        const url = "https://sites.google.com/view/mrgreenlondon/terms-of-use";
         const canOpen = await Linking.canOpenURL(url);
         if (canOpen) {
             await Linking.openURL(url);
@@ -67,8 +67,12 @@ export function MenuModal({ visible, onClose }: MenuModalProps) {
         onClose();
     };
 
-    const handleOpenAbout = () => {
-        // Could navigate to about screen or show info
+    const handleOpenAbout = async () => {
+        const url = "https://www.mrgreenlondon.com/";
+        const canOpen = await Linking.canOpenURL(url);
+        if (canOpen) {
+            await Linking.openURL(url);
+        }
         onClose();
     };
 

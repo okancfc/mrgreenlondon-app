@@ -31,14 +31,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const initializeAuth = async () => {
-    // Get initial session
-    const { data: { session } } = await supabase.auth.getSession();
-    setSession(session);
-    setUser(session?.user ?? null);
+    try {
+      // Get initial session
+      const { data: { session }, error } = await supabase.auth.getSession();
 
-    if (session?.user) {
-      await loadProfile(session.user);
-    } else {
+      // Handle invalid refresh token error
+      if (error && error.message?.includes('refresh_token_not_found')) {
+        console.warn('Invalid refresh token detected, clearing session');
+        await supabase.auth.signOut();
+        setSession(null);
+        setUser(null);
+        setIsLoading(false);
+        return;
+      }
+
+      setSession(session);
+      setUser(session?.user ?? null);
+
+      if (session?.user) {
+        await loadProfile(session.user);
+      } else {
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error('Error initializing auth:', error);
+      // Clear invalid session on any auth error
+      await supabase.auth.signOut();
+      setSession(null);
+      setUser(null);
       setIsLoading(false);
     }
 

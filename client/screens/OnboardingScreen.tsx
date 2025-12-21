@@ -9,6 +9,7 @@ import {
     Pressable,
     NativeScrollEvent,
     NativeSyntheticEvent,
+    ScrollView,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -154,10 +155,18 @@ export default function OnboardingScreen() {
                     Select your London area to find services available near you.
                 </ThemedText>
 
-                <AreaSelector
-                    selectedArea={selectedAreaValue}
-                    onSelectArea={setSelectedAreaValue}
-                />
+                <ScrollView
+                    style={styles.areaScrollView}
+                    contentContainerStyle={styles.areaScrollContent}
+                    showsVerticalScrollIndicator={false}
+                    bounces={true}
+                    nestedScrollEnabled={true}
+                >
+                    <AreaSelector
+                        selectedArea={selectedAreaValue}
+                        onSelectArea={setSelectedAreaValue}
+                    />
+                </ScrollView>
             </View>
         </View>
     );
@@ -318,6 +327,12 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: Spacing.xl,
         paddingTop: Spacing.xl,
+    },
+    areaScrollView: {
+        flex: 1,
+    },
+    areaScrollContent: {
+        paddingBottom: Spacing.xl,
     },
     howItWorksContent: {
         flex: 1,

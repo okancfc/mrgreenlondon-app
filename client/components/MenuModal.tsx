@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
 import { Card } from "@/components/Card";
 import { useTheme } from "@/hooks/useTheme";
@@ -90,7 +91,10 @@ export function MenuModal({ visible, onClose }: MenuModalProps) {
                     <ThemedText type="h4" style={styles.headerTitle}>
                         Menu
                     </ThemedText>
-                    <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+                    <TouchableOpacity onPress={() => {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                        onClose();
+                    }} style={styles.closeButton}>
                         <Feather name="x" size={24} color={theme.text} />
                     </TouchableOpacity>
                 </View>
@@ -111,7 +115,10 @@ export function MenuModal({ visible, onClose }: MenuModalProps) {
                     <Card style={styles.sectionCard}>
                         <TouchableOpacity
                             style={styles.menuItem}
-                            onPress={handleOpenWhatsApp}
+                            onPress={() => {
+                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                handleOpenWhatsApp();
+                            }}
                             activeOpacity={0.7}
                         >
                             <View style={[styles.iconContainer, { backgroundColor: "#25D366" + "15" }]}>
@@ -130,7 +137,10 @@ export function MenuModal({ visible, onClose }: MenuModalProps) {
 
                         <TouchableOpacity
                             style={styles.menuItem}
-                            onPress={handleOpenEmail}
+                            onPress={() => {
+                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                handleOpenEmail();
+                            }}
                             activeOpacity={0.7}
                         >
                             <View style={[styles.iconContainer, { backgroundColor: theme.brandGreen + "15" }]}>
@@ -153,7 +163,10 @@ export function MenuModal({ visible, onClose }: MenuModalProps) {
                     <Card style={styles.sectionCard}>
                         <TouchableOpacity
                             style={styles.menuItem}
-                            onPress={handleOpenAbout}
+                            onPress={() => {
+                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                handleOpenAbout();
+                            }}
                             activeOpacity={0.7}
                         >
                             <View style={[styles.iconContainer, { backgroundColor: theme.brandGreen + "15" }]}>
@@ -172,7 +185,10 @@ export function MenuModal({ visible, onClose }: MenuModalProps) {
 
                         <TouchableOpacity
                             style={styles.menuItem}
-                            onPress={handleOpenPrivacyPolicy}
+                            onPress={() => {
+                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                handleOpenPrivacyPolicy();
+                            }}
                             activeOpacity={0.7}
                         >
                             <View style={[styles.iconContainer, { backgroundColor: theme.brandGreen + "15" }]}>
@@ -188,7 +204,10 @@ export function MenuModal({ visible, onClose }: MenuModalProps) {
 
                         <TouchableOpacity
                             style={styles.menuItem}
-                            onPress={handleOpenTerms}
+                            onPress={() => {
+                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                handleOpenTerms();
+                            }}
                             activeOpacity={0.7}
                         >
                             <View style={[styles.iconContainer, { backgroundColor: theme.brandGreen + "15" }]}>

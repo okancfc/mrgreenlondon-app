@@ -6,6 +6,7 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQuery } from "@tanstack/react-query";
+import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
 import { BookingCard } from "@/components/BookingCard";
 import { EmptyState } from "@/components/EmptyState";
@@ -112,7 +113,10 @@ export default function BookingsScreen() {
       />
 
       <Pressable
-        onPress={() => setActiveTab("upcoming")}
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          setActiveTab("upcoming");
+        }}
         style={styles.tab}
       >
         <ThemedText
@@ -125,7 +129,10 @@ export default function BookingsScreen() {
         </ThemedText>
       </Pressable>
       <Pressable
-        onPress={() => setActiveTab("past")}
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          setActiveTab("past");
+        }}
         style={styles.tab}
       >
         <ThemedText

@@ -6,6 +6,7 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
 import { ThemedText } from "@/components/ThemedText";
 import { Button } from "@/components/Button";
@@ -37,6 +38,7 @@ export default function ProfileScreen() {
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSignOut = () => {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     Alert.alert("Sign Out", "Are you sure you want to sign out?", [
       { text: "Cancel", style: "cancel" },
       {
@@ -54,6 +56,7 @@ export default function ProfileScreen() {
   };
 
   const handleDeleteAccount = () => {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     Alert.alert(
       "Delete Account",
       "Are you sure you want to permanently delete your account? This action cannot be undone. All your data including bookings, addresses, and profile information will be deleted.",
@@ -70,6 +73,7 @@ export default function ProfileScreen() {
                 routes: [{ name: "SignIn" }],
               });
             } catch (error: any) {
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
               Alert.alert("Error", error.message || "Failed to delete account. Please try again.");
             }
           },
@@ -83,6 +87,7 @@ export default function ProfileScreen() {
 
     // Validate phone if provided
     if (phone && phone !== "" && !isValidUKPhoneNumber(phone)) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert("Invalid Phone", "Please enter a valid UK phone number (+44 7XXX XXX XXX)");
       return;
     }
@@ -98,8 +103,10 @@ export default function ProfileScreen() {
       });
       await refreshProfile();
       setIsEditing(false);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       Alert.alert("Success", "Profile updated successfully.");
     } catch (error: any) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert("Error", error.message || "Failed to update profile.");
     } finally {
       setIsSaving(false);
@@ -113,9 +120,11 @@ export default function ProfileScreen() {
       if (supported) {
         await Linking.openURL(url);
       } else {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         Alert.alert("Error", "WhatsApp is not available on this device.");
       }
     } catch (error) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert("Error", "Failed to open WhatsApp.");
     }
   };
@@ -125,6 +134,7 @@ export default function ProfileScreen() {
     try {
       await Linking.openURL(url);
     } catch (error) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert("Error", "Failed to open email.");
     }
   };
@@ -217,7 +227,10 @@ export default function ProfileScreen() {
               </View>
             ) : null}
             <Pressable
-              onPress={() => setIsEditing(true)}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                setIsEditing(true);
+              }}
               style={[styles.editButton, { backgroundColor: theme.brandGreen + "15" }]}
             >
               <Feather name="edit-2" size={16} color={theme.brandGreen} />
@@ -233,7 +246,10 @@ export default function ProfileScreen() {
         Support
       </ThemedText>
       <Card style={styles.supportCard}>
-        <Pressable style={styles.supportItem} onPress={handleOpenWhatsApp}>
+        <Pressable style={styles.supportItem} onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          handleOpenWhatsApp();
+        }}>
           <View style={[styles.supportIcon, { backgroundColor: "#25D366" + "20" }]}>
             <Feather name="message-circle" size={20} color="#25D366" />
           </View>
@@ -246,7 +262,10 @@ export default function ProfileScreen() {
           <Feather name="chevron-right" size={20} color={theme.textSecondary} />
         </Pressable>
         <View style={[styles.divider, { backgroundColor: theme.border }]} />
-        <Pressable style={styles.supportItem} onPress={handleOpenEmail}>
+        <Pressable style={styles.supportItem} onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          handleOpenEmail();
+        }}>
           <View style={[styles.supportIcon, { backgroundColor: theme.brandGreen + "20" }]}>
             <Feather name="mail" size={20} color={theme.brandGreen} />
           </View>

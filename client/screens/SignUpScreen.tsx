@@ -1,14 +1,18 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Alert, Image, Pressable, ScrollView, KeyboardAvoidingView, Platform, Linking } from "react-native";
+import { View, StyleSheet, Alert, Image, Pressable, Linking } from "react-native";
+import { useKeyboardHandler } from "react-native-keyboard-controller";
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
 import { TextField } from "@/components/TextField";
 import { Button } from "@/components/Button";
+import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing } from "@/constants/theme";
 import { signUp } from "@/lib/auth";
@@ -41,6 +45,22 @@ export default function SignUpScreen() {
     const navigation = useNavigation<NavigationProp>();
     const { theme, isDark } = useTheme();
     const [isLoading, setIsLoading] = useState(false);
+    const keyboardHeight = useSharedValue(0);
+
+    useKeyboardHandler({
+        onMove: (e) => {
+            'worklet';
+            keyboardHeight.value = withSpring(e.height, {
+                damping: 50,
+                stiffness: 400,
+            });
+        },
+    });
+
+    const bottomAnimatedStyle = useAnimatedStyle(() => ({
+        transform: [{ translateY: keyboardHeight.value }],
+        paddingBottom: insets.bottom + Spacing.lg,
+    }));
 
     const {
         control,
@@ -79,6 +99,7 @@ export default function SignUpScreen() {
                 });
             }
         } catch (error: any) {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
             Alert.alert(
                 "Sign Up Failed",
                 error.message || "Failed to create account. Please try again."
@@ -89,11 +110,8 @@ export default function SignUpScreen() {
     };
 
     return (
-        <KeyboardAvoidingView
-            style={[styles.container, { backgroundColor: theme.backgroundRoot }]}
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
-        >
-            <ScrollView
+        <View style={[styles.container, { backgroundColor: theme.backgroundRoot }]}>
+            <KeyboardAwareScrollViewCompat
                 style={styles.scrollView}
                 contentContainerStyle={[
                     styles.scrollContent,
@@ -214,10 +232,10 @@ export default function SignUpScreen() {
                     />
 
                 </View>
-            </ScrollView>
+            </KeyboardAwareScrollViewCompat>
 
             {/* Fixed Bottom Section */}
-            <View style={[styles.bottomContainer, { paddingBottom: insets.bottom + Spacing.lg }]}>
+            <Animated.View style={[styles.bottomContainer, { backgroundColor: theme.backgroundRoot, borderTopWidth: 1, borderTopColor: theme.border }, bottomAnimatedStyle]}>
                 <ThemedText type="small" style={[styles.legalText, { color: theme.textSecondary }]}>
                     By creating an account, you agree to our{" "}
                     <ThemedText
@@ -240,7 +258,7 @@ export default function SignUpScreen() {
                 <Button
                     onPress={handleSubmit(onSubmit)}
                     disabled={isLoading}
-                    style={styles.button}
+                    style={[styles.button, { backgroundColor: theme.brandGreen }]}
                 >
                     {isLoading ? "Creating Account..." : "Create Account"}
                 </Button>
@@ -249,14 +267,17 @@ export default function SignUpScreen() {
                     <ThemedText type="body" style={{ color: theme.textSecondary }}>
                         Already have an account?{" "}
                     </ThemedText>
-                    <Pressable onPress={() => navigation.navigate("SignIn")}>
+                    <Pressable onPress={() => {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                        navigation.navigate("SignIn");
+                    }}>
                         <ThemedText type="body" style={{ color: theme.brandGreen, fontWeight: "600" }}>
                             Sign In
                         </ThemedText>
                     </Pressable>
                 </View>
-            </View>
-        </KeyboardAvoidingView>
+            </Animated.View>
+        </View>
     );
 }
 
@@ -299,15 +320,11 @@ const styles = StyleSheet.create({
     bottomContainer: {
         paddingHorizontal: Spacing.xl,
         paddingTop: Spacing.lg,
-        borderTopWidth: 1,
-        borderTopColor: "rgba(0,0,0,0.05)",
     },
     legalText: {
         textAlign: "center",
         marginBottom: Spacing.lg,
         lineHeight: 18,
     },
-    button: {
-        backgroundColor: "#0A3E12",
-    },
+    button: {},
 });

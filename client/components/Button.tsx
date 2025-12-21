@@ -6,6 +6,7 @@ import Animated, {
   withSpring,
   WithSpringConfig,
 } from "react-native-reanimated";
+import * as Haptics from "expo-haptics";
 
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
@@ -48,6 +49,7 @@ export function Button({
   const handlePressIn = () => {
     if (!disabled) {
       scale.value = withSpring(0.98, springConfig);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
   };
 

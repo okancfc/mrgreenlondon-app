@@ -15,6 +15,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
 import { Button } from "@/components/Button";
 import { AreaSelector } from "@/components/AreaSelector";
@@ -60,6 +61,7 @@ export default function OnboardingScreen() {
     const TOTAL_PAGES = 3;
 
     const handleNext = async () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         if (currentPage < TOTAL_PAGES - 1) {
             flatListRef.current?.scrollToIndex({
                 index: currentPage + 1,
@@ -80,6 +82,7 @@ export default function OnboardingScreen() {
     };
 
     const handleSkip = async () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         await setOnboardingCompleted(true);
         setOnboardingComplete(true);
         navigation.reset({
@@ -96,6 +99,9 @@ export default function OnboardingScreen() {
     const handleScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
         const offset = e.nativeEvent.contentOffset.x;
         const page = Math.round(offset / SCREEN_WIDTH);
+        if (page !== currentPage) {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        }
         setCurrentPage(page);
     };
 
@@ -288,7 +294,7 @@ export default function OnboardingScreen() {
 
                 <Button
                     onPress={handleNext}
-                    style={styles.button}
+                    style={[styles.button, { backgroundColor: theme.brandGreen }]}
                     disabled={isNextDisabled()}
                 >
                     {getButtonText()}
@@ -398,7 +404,5 @@ const styles = StyleSheet.create({
         height: 8,
         borderRadius: 4,
     },
-    button: {
-        backgroundColor: "#0A3E12",
-    },
+    button: {},
 });

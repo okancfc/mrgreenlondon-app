@@ -8,6 +8,7 @@ import {
   Pressable,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
@@ -75,7 +76,10 @@ export const TextField = forwardRef<TextInput, TextFieldProps>(
           />
           {showPasswordToggle && secureTextEntry ? (
             <Pressable
-              onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                setIsPasswordVisible(!isPasswordVisible);
+              }}
               style={styles.toggleButton}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >

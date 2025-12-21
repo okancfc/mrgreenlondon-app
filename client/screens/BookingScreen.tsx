@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Feather } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
 import { ThemedText } from "@/components/ThemedText";
 import { TextField } from "@/components/TextField";
@@ -124,6 +125,7 @@ export default function BookingScreen() {
   };
 
   const handleBack = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     if (step > 0) {
       setStep(step - 1);
     } else {
@@ -177,6 +179,7 @@ export default function BookingScreen() {
 
       await queryClient.invalidateQueries({ queryKey: ["bookings"] });
 
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       Alert.alert(
         "Booking Confirmed",
         "Your booking has been submitted successfully. We will confirm your appointment soon.",
@@ -202,6 +205,7 @@ export default function BookingScreen() {
         ]
       );
     } catch (error: any) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert("Error", error.message || "Failed to create booking. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -350,7 +354,10 @@ export default function BookingScreen() {
         Select Date
       </ThemedText>
       <Pressable
-        onPress={() => setShowDatePicker(true)}
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          setShowDatePicker(true);
+        }}
         style={[styles.dateButton, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}
       >
         <Feather name="calendar" size={20} color={theme.brandGreen} />
@@ -374,7 +381,10 @@ export default function BookingScreen() {
         {TIME_WINDOWS.map((tw) => (
           <Pressable
             key={tw.value}
-            onPress={() => handleTimeWindowChange(tw.value)}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              handleTimeWindowChange(tw.value);
+            }}
             style={[
               styles.timeWindowButton,
               {

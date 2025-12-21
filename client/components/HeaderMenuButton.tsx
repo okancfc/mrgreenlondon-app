@@ -1,6 +1,7 @@
 import React from "react";
 import { Pressable, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import { useTheme } from "@/hooks/useTheme";
 
 interface HeaderMenuButtonProps {
@@ -13,7 +14,10 @@ export function HeaderMenuButton({ onPress }: HeaderMenuButtonProps) {
     return (
         <Pressable
             style={styles.button}
-            onPress={onPress}
+            onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                onPress();
+            }}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
             <Feather name="menu" size={24} color={theme.text} />

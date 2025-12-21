@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Platform, StyleSheet } from "react-native";
+import * as Haptics from "expo-haptics";
 import HomeStackNavigator from "@/navigation/HomeStackNavigator";
 import BookingsStackNavigator from "@/navigation/BookingsStackNavigator";
 import ProfileStackNavigator from "@/navigation/ProfileStackNavigator";
@@ -43,6 +44,11 @@ export default function MainTabNavigator() {
             />
           ) : null,
         headerShown: false,
+      }}
+      screenListeners={{
+        tabPress: () => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        },
       }}
     >
       <Tab.Screen

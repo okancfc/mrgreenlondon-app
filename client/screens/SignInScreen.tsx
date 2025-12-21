@@ -6,6 +6,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
 import { TextField } from "@/components/TextField";
 import { Button } from "@/components/Button";
@@ -51,6 +52,7 @@ export default function SignInScreen() {
                 routes: [{ name: "Main" }],
             });
         } catch (error: any) {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
             Alert.alert(
                 "Sign In Failed",
                 error.message || "Invalid email or password. Please try again."
@@ -131,7 +133,7 @@ export default function SignInScreen() {
                 <Button
                     onPress={handleSubmit(onSubmit)}
                     disabled={isLoading}
-                    style={styles.button}
+                    style={[styles.button, { backgroundColor: theme.brandGreen }]}
                 >
                     {isLoading ? "Signing In..." : "Sign In"}
                 </Button>
@@ -140,7 +142,10 @@ export default function SignInScreen() {
                     <ThemedText type="body" style={{ color: theme.textSecondary }}>
                         Don't have an account?{" "}
                     </ThemedText>
-                    <Pressable onPress={() => navigation.navigate("SignUp")}>
+                    <Pressable onPress={() => {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                        navigation.navigate("SignUp");
+                    }}>
                         <ThemedText type="body" style={{ color: theme.brandGreen, fontWeight: "600" }}>
                             Create Account
                         </ThemedText>
@@ -181,7 +186,6 @@ const styles = StyleSheet.create({
     },
     button: {
         marginTop: Spacing.md,
-        backgroundColor: "#0A3E12",
     },
     signupContainer: {
         flexDirection: "row",

@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet, Pressable } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
@@ -21,7 +22,10 @@ export function AreaSelector({ selectedArea, onSelectArea }: AreaSelectorProps) 
         return (
           <Pressable
             key={area.value}
-            onPress={() => onSelectArea(area.value)}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              onSelectArea(area.value);
+            }}
             style={[
               styles.areaItem,
               {

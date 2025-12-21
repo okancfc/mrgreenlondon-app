@@ -6,6 +6,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
@@ -32,14 +33,14 @@ const getIconForService = (iconKey: string | null, category: string | null): key
     };
     return iconMap[iconKey] || "tool";
   }
-  
+
   const categoryMap: Record<string, keyof typeof Feather.glyphMap> = {
     "landscaping": "sun",
     "garden": "sun",
     "cleaning": "home",
     "maintenance": "tool",
   };
-  
+
   return categoryMap[category?.toLowerCase() || ""] || "tool";
 };
 
@@ -53,6 +54,7 @@ export function ServiceCard({ service, onPress }: ServiceCardProps) {
 
   const handlePressIn = () => {
     scale.value = withSpring(0.98);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   };
 
   const handlePressOut = () => {
@@ -75,12 +77,12 @@ export function ServiceCard({ service, onPress }: ServiceCardProps) {
       <View style={[styles.iconContainer, { backgroundColor: theme.brandGreen + "15" }]}>
         <Feather name={iconName} size={32} color={theme.brandGreen} />
       </View>
-      
+
       <View style={styles.content}>
         <ThemedText type="h4" style={styles.name}>
           {service.name}
         </ThemedText>
-        
+
         {service.description ? (
           <ThemedText
             type="small"
@@ -90,7 +92,7 @@ export function ServiceCard({ service, onPress }: ServiceCardProps) {
             {service.description}
           </ThemedText>
         ) : null}
-        
+
         <View style={styles.footer}>
           <View style={styles.details}>
             {service.estimated_duration_minutes ? (
@@ -104,7 +106,7 @@ export function ServiceCard({ service, onPress }: ServiceCardProps) {
                 </ThemedText>
               </View>
             ) : null}
-            
+
             {service.starting_price_label ? (
               <ThemedText
                 type="small"
@@ -114,7 +116,7 @@ export function ServiceCard({ service, onPress }: ServiceCardProps) {
               </ThemedText>
             ) : null}
           </View>
-          
+
           <View style={[styles.bookButton, { backgroundColor: theme.brandGreen }]}>
             <ThemedText style={styles.bookButtonText}>Book</ThemedText>
           </View>

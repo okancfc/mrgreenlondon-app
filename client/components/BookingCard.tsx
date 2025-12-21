@@ -6,6 +6,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
 import { Chip, getStatusChipVariant, getStatusLabel } from "@/components/Chip";
 import { useTheme } from "@/hooks/useTheme";
@@ -46,6 +47,7 @@ export function BookingCard({ booking, onPress }: BookingCardProps) {
 
   const handlePressIn = () => {
     scale.value = withSpring(0.98);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   };
 
   const handlePressOut = () => {

@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
@@ -40,6 +41,7 @@ export default function BookingDetailScreen() {
       setBooking(data);
     } catch (error) {
       console.error("Error loading booking:", error);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert("Error", "Failed to load booking details.");
     } finally {
       setIsLoading(false);
@@ -47,12 +49,14 @@ export default function BookingDetailScreen() {
   };
 
   const handleBack = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.goBack();
   };
 
   const handleCancel = () => {
     if (!booking) return;
 
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     Alert.alert(
       "Cancel Booking",
       "Are you sure you want to cancel this booking?",
@@ -74,10 +78,12 @@ export default function BookingDetailScreen() {
     try {
       await cancelBooking(booking.id, "Canceled by user");
       await queryClient.invalidateQueries({ queryKey: ["bookings"] });
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       Alert.alert("Booking Canceled", "Your booking has been canceled.", [
         { text: "OK", onPress: () => navigation.goBack() },
       ]);
     } catch (error: any) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert("Error", error.message || "Failed to cancel booking.");
     } finally {
       setIsCanceling(false);

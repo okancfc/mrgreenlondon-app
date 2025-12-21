@@ -361,6 +361,7 @@ const styles = StyleSheet.create({
     },
     steps: {
         gap: Spacing.xl,
+        paddingTop: Spacing.xl,
     },
     step: {
         flexDirection: "row",

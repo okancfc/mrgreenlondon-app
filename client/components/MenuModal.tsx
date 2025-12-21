@@ -204,7 +204,7 @@ export function MenuModal({ visible, onClose }: MenuModalProps) {
                     {/* Footer */}
                     <View style={styles.footer}>
                         <ThemedText type="small" style={{ color: theme.textSecondary, textAlign: "center" }}>
-                            © 2024 MrGreen London
+                            © 2025 MrGreen London
                         </ThemedText>
                         <ThemedText type="small" style={{ color: theme.textSecondary, textAlign: "center" }}>
                             Professional Garden Services

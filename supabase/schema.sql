@@ -1,4 +1,4 @@
--- MrGreen App Database Schema
+-- Sir Green App Database Schema
 -- Run this in Supabase SQL Editor to set up the database
 
 -- Enable UUID extension

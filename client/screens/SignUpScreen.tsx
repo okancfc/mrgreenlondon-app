@@ -135,7 +135,7 @@ export default function SignUpScreen() {
                         type="body"
                         style={[styles.subtitle, { color: theme.textSecondary }]}
                     >
-                        Sign up to get started with MrGreen
+                        Sign up to get started with Sir Green
                     </ThemedText>
                 </View>
 

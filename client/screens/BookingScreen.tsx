@@ -14,10 +14,11 @@ import { ThemedText } from "@/components/ThemedText";
 import { TextField } from "@/components/TextField";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
+import { AreaSelector } from "@/components/AreaSelector";
 import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/context/AuthContext";
 import { Spacing, BorderRadius } from "@/constants/theme";
-import { getServiceById, getDefaultAddress, createAddress, createBooking } from "@/lib/api";
+import { getServiceById, getDefaultAddress, createAddress, createBooking, upsertProfile } from "@/lib/api";
 import { Service, Address, TIME_WINDOWS } from "@/lib/types";
 import { queryClient } from "@/lib/query-client";
 import { handlePhoneInput, isValidUKPhoneNumber } from "@/lib/phone";
@@ -56,7 +57,7 @@ export default function BookingScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouteProps>();
   const { theme } = useTheme();
-  const { user } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
 
   const { serviceId, serviceName } = route.params;
 
@@ -67,6 +68,7 @@ export default function BookingScreen() {
   const [selectedTimeWindow, setSelectedTimeWindow] = useState(TIME_WINDOWS[0].value);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedArea, setSelectedArea] = useState<string | null>(null);
 
   const {
     control,
@@ -112,6 +114,16 @@ export default function BookingScreen() {
         setValue("line2", addressData.line2 || "");
         setValue("city", addressData.city);
         setValue("postcode", addressData.postcode);
+      }
+
+      // Auto-fill phone from profile
+      if (profile?.phone) {
+        setValue("phone", profile.phone);
+      }
+
+      // Auto-fill area from profile
+      if (profile?.area) {
+        setSelectedArea(profile.area);
       }
     } catch (error) {
       console.error("Error loading data:", error);
@@ -176,6 +188,18 @@ export default function BookingScreen() {
         status: "requested",
         cancel_reason: null,
       });
+
+      // Save phone and area to profile for future bookings
+      if (selectedArea || data.phone) {
+        await upsertProfile({
+          id: user.id,
+          email: profile?.email || user.email || null,
+          phone: data.phone || profile?.phone || null,
+          full_name: profile?.full_name || null,
+          area: selectedArea || profile?.area || null,
+        });
+        await refreshProfile();
+      }
 
       await queryClient.invalidateQueries({ queryKey: ["bookings"] });
 
@@ -332,8 +356,14 @@ export default function BookingScreen() {
         )}
       />
 
+      <ThemedText type="small" style={[styles.fieldLabel, { color: theme.textSecondary, marginTop: Spacing.md }]}>
+        Service Area *
+      </ThemedText>
+      <AreaSelector selectedArea={selectedArea} onSelectArea={setSelectedArea} />
+
       <Button
         onPress={handleSubmit(handleNext)}
+        disabled={!selectedArea}
         style={[styles.nextButton, { backgroundColor: theme.brandGreen }]}
       >
         Continue
@@ -474,6 +504,11 @@ export default function BookingScreen() {
               <ThemedText type="body">
                 {formData.city}, {formData.postcode}
               </ThemedText>
+              {selectedArea && (
+                <ThemedText type="small" style={{ color: theme.textSecondary, marginTop: Spacing.xs }}>
+                  {selectedArea} London
+                </ThemedText>
+              )}
             </View>
           </View>
 

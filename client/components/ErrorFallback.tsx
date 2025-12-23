@@ -63,7 +63,7 @@ export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
         </ThemedText>
 
         <ThemedText type="body" style={styles.message}>
-          MrGreen had an issue. Please tap below to restart.
+          Sir Green had an issue. Please tap below to restart.
         </ThemedText>
 
         <Pressable

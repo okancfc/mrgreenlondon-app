@@ -133,7 +133,7 @@ export default function OnboardingScreen() {
                 </View>
 
                 <ThemedText type="h1" style={styles.title}>
-                    Welcome to MrGreen
+                    Welcome to Sir Green
                 </ThemedText>
 
                 <ThemedText

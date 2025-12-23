@@ -1,8 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const KEYS = {
-  ONBOARDING_COMPLETED: "@mrgreen:onboarding_completed",
-  SELECTED_AREA: "@mrgreen:selected_area",
+  ONBOARDING_COMPLETED: "@sirgreen:onboarding_completed",
+  SELECTED_AREA: "@sirgreen:selected_area",
 };
 
 export async function getOnboardingCompleted(): Promise<boolean> {

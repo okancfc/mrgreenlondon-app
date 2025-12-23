@@ -1,4 +1,4 @@
-# MrGreen App - Design Guidelines
+# Sir Green App - Design Guidelines
 
 ## Brand Identity & Visual Language
 **Design Philosophy**: Clean, modern, premium with a calm "garden/outdoor" vibe. Emphasize whitespace, large photography placeholders, rounded cards, and soft shadows to create a welcoming, trustworthy experience for booking local services.

@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "MrGreen",
-    "slug": "mrgreen",
+    "name": "SirGreen",
+    "slug": "sirgreen",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "mrgreen",
+    "scheme": "sirgreen",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.mrgreen.app"
+      "bundleIdentifier": "com.sirgreen.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -21,7 +21,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.mrgreen.app"
+      "package": "com.sirgreen.app"
     },
     "web": {
       "output": "single",

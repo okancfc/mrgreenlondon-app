@@ -1,4 +1,4 @@
-# MrGreen App
+# Sir Green App
 
 A production-ready mobile app for booking local services in the UK (landscaping and home services). Built with React Native, Expo, and Supabase.
 

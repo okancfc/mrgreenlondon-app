@@ -35,9 +35,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Get initial session
       const { data: { session }, error } = await supabase.auth.getSession();
 
-      // Handle invalid refresh token error
-      if (error && error.message?.includes('refresh_token_not_found')) {
-        console.warn('Invalid refresh token detected, clearing session');
+      // Handle invalid refresh token error (various formats)
+      if (error && (
+        error.message?.toLowerCase().includes('refresh token') ||
+        error.message?.toLowerCase().includes('refresh_token') ||
+        error.name === 'AuthApiError'
+      )) {
+        console.warn('Invalid refresh token detected, clearing session:', error.message);
         await supabase.auth.signOut();
         setSession(null);
         setUser(null);

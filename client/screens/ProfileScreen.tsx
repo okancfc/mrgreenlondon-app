@@ -114,7 +114,7 @@ export default function ProfileScreen() {
   };
 
   const handleOpenWhatsApp = async () => {
-    const url = "https://wa.me/447000000000";
+    const url = "https://wa.me/447874310451";
     try {
       const supported = await Linking.canOpenURL(url);
       if (supported) {
@@ -130,7 +130,7 @@ export default function ProfileScreen() {
   };
 
   const handleOpenEmail = async () => {
-    const url = "mailto:support@mrgreen.app";
+    const url = "mailto:info@sirgreen.co.uk";
     try {
       await Linking.openURL(url);
     } catch (error) {
@@ -158,7 +158,7 @@ export default function ProfileScreen() {
           </View>
           <View style={styles.profileInfo}>
             <ThemedText type="h4">
-              {profile?.full_name || "MrGreen User"}
+              {profile?.full_name || "Sir Green User"}
             </ThemedText>
             <ThemedText type="small" style={{ color: theme.textSecondary }}>
               {profile?.phone || user?.phone || "No phone"}
@@ -272,7 +272,7 @@ export default function ProfileScreen() {
           <View style={styles.supportText}>
             <ThemedText type="body">Email</ThemedText>
             <ThemedText type="small" style={{ color: theme.textSecondary }}>
-              support@mrgreen.app
+              info@sirgreen.co.uk
             </ThemedText>
           </View>
           <Feather name="chevron-right" size={20} color={theme.textSecondary} />

@@ -297,8 +297,8 @@ const styles = StyleSheet.create({
         marginBottom: Spacing["2xl"],
     },
     logo: {
-        width: 80,
-        height: 80,
+        width: 120,
+        height: 120,
         marginBottom: Spacing.lg,
     },
     title: {

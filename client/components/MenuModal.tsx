@@ -32,7 +32,7 @@ export function MenuModal({ visible, onClose }: MenuModalProps) {
     const { theme } = useTheme();
 
     const handleOpenEmail = async () => {
-        const email = "support@mrgreen.app";
+        const email = "info@sirgreen.co.uk";
         const url = `mailto:${email}`;
         const canOpen = await Linking.canOpenURL(url);
         if (canOpen) {
@@ -42,7 +42,7 @@ export function MenuModal({ visible, onClose }: MenuModalProps) {
     };
 
     const handleOpenWhatsApp = async () => {
-        const url = "https://wa.me/447000000000";
+        const url = "https://wa.me/447874310451";
         const canOpen = await Linking.canOpenURL(url);
         if (canOpen) {
             await Linking.openURL(url);
@@ -69,7 +69,7 @@ export function MenuModal({ visible, onClose }: MenuModalProps) {
     };
 
     const handleOpenAbout = async () => {
-        const url = "https://www.mrgreenlondon.com/";
+        const url = "https://www.sirgreen.co.uk/";
         const canOpen = await Linking.canOpenURL(url);
         if (canOpen) {
             await Linking.openURL(url);
@@ -149,7 +149,7 @@ export function MenuModal({ visible, onClose }: MenuModalProps) {
                             <View style={styles.menuItemContent}>
                                 <ThemedText type="body">Email</ThemedText>
                                 <ThemedText type="small" style={{ color: theme.textSecondary }}>
-                                    support@mrgreen.app
+                                    info@sirgreen.co.uk
                                 </ThemedText>
                             </View>
                             <Feather name="chevron-right" size={20} color={theme.textSecondary} />
@@ -173,7 +173,7 @@ export function MenuModal({ visible, onClose }: MenuModalProps) {
                                 <Feather name="info" size={20} color={theme.brandGreen} />
                             </View>
                             <View style={styles.menuItemContent}>
-                                <ThemedText type="body">About MrGreen</ThemedText>
+                                <ThemedText type="body">About Sir Green</ThemedText>
                                 <ThemedText type="small" style={{ color: theme.textSecondary }}>
                                     Version 1.0.0
                                 </ThemedText>
@@ -223,7 +223,7 @@ export function MenuModal({ visible, onClose }: MenuModalProps) {
                     {/* Footer */}
                     <View style={styles.footer}>
                         <ThemedText type="small" style={{ color: theme.textSecondary, textAlign: "center" }}>
-                            © 2025 MrGreen London
+                            © 2025 Sir Green
                         </ThemedText>
                         <ThemedText type="small" style={{ color: theme.textSecondary, textAlign: "center" }}>
                             Professional Garden Services

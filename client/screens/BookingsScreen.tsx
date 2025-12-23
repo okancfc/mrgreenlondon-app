@@ -65,7 +65,10 @@ export default function BookingsScreen() {
     const now = new Date();
     return bookings.filter((booking) => {
       const scheduledDate = new Date(booking.scheduled_at);
-      const isPast = scheduledDate < now || booking.status === "completed" || booking.status === "canceled";
+      const isDatePast = scheduledDate < now;
+      // Canceled bookings stay in Upcoming until their date passes
+      // Completed bookings always go to Past
+      const isPast = isDatePast || booking.status === "completed";
       return activeTab === "past" ? isPast : !isPast;
     });
   }, [bookings, activeTab]);

@@ -44,6 +44,24 @@ const getIconForService = (iconKey: string | null, category: string | null): key
   return categoryMap[category?.toLowerCase() || ""] || "tool";
 };
 
+// Get soft color based on category
+const getCategoryColor = (category: string | null): { background: string; accent: string } => {
+  const colors: Record<string, { background: string; accent: string }> = {
+    "landscape": { background: "#E8F5E9", accent: "#66BB6A" },      // Light green
+    "landscaping": { background: "#E8F5E9", accent: "#66BB6A" },    // Light green
+    "gardening": { background: "#C8E6C9", accent: "#388E3C" },      // Dark green
+    "garden": { background: "#C8E6C9", accent: "#388E3C" },         // Dark green
+    "maintenance": { background: "#FFF8E1", accent: "#D4A574" },    // Beige
+    "cleaning": { background: "#E3F2FD", accent: "#1E3A5F" },       // Navy blue
+    "home improvements": { background: "#F3E5F5", accent: "#9C27B0" }, // Lavender/Purple
+    "home improvement": { background: "#F3E5F5", accent: "#9C27B0" },  // Lavender/Purple
+    "painting": { background: "#FCE4EC", accent: "#E91E63" },       // Pink
+    "moving": { background: "#ECEFF1", accent: "#607D8B" },         // Gray
+  };
+
+  return colors[category?.toLowerCase() || ""] || { background: "#E8F5E9", accent: "#4CAF50" }; // Default green
+};
+
 export function ServiceCard({ service, onPress }: ServiceCardProps) {
   const { theme } = useTheme();
   const scale = useSharedValue(1);
@@ -62,6 +80,7 @@ export function ServiceCard({ service, onPress }: ServiceCardProps) {
   };
 
   const iconName = getIconForService(service.icon_key, service.category);
+  const categoryColors = getCategoryColor(service.category);
 
   return (
     <AnimatedPressable
@@ -74,7 +93,7 @@ export function ServiceCard({ service, onPress }: ServiceCardProps) {
         animatedStyle,
       ]}
     >
-      <View style={[styles.iconContainer, { backgroundColor: theme.brandGreen + "15" }]}>
+      <View style={[styles.iconContainer, { backgroundColor: categoryColors.background }]}>
         {service.icon_url ? (
           <Image
             source={{ uri: service.icon_url }}
@@ -82,7 +101,7 @@ export function ServiceCard({ service, onPress }: ServiceCardProps) {
             resizeMode="contain"
           />
         ) : (
-          <Feather name={iconName} size={32} color={theme.brandGreen} />
+          <Feather name={iconName} size={32} color={categoryColors.accent} />
         )}
       </View>
 
@@ -118,14 +137,14 @@ export function ServiceCard({ service, onPress }: ServiceCardProps) {
             {service.starting_price_label ? (
               <ThemedText
                 type="small"
-                style={[styles.price, { color: theme.brandGreen }]}
+                style={[styles.price, { color: categoryColors.accent }]}
               >
                 {service.starting_price_label}
               </ThemedText>
             ) : null}
           </View>
 
-          <View style={[styles.bookButton, { backgroundColor: theme.brandGreen }]}>
+          <View style={[styles.bookButton, { backgroundColor: categoryColors.accent }]}>
             <ThemedText style={styles.bookButtonText}>Book</ThemedText>
           </View>
         </View>

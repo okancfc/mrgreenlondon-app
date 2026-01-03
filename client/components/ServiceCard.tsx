@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Pressable } from "react-native";
+import { View, StyleSheet, Pressable, Image } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import Animated, {
   useAnimatedStyle,
@@ -75,7 +75,15 @@ export function ServiceCard({ service, onPress }: ServiceCardProps) {
       ]}
     >
       <View style={[styles.iconContainer, { backgroundColor: theme.brandGreen + "15" }]}>
-        <Feather name={iconName} size={32} color={theme.brandGreen} />
+        {service.icon_url ? (
+          <Image
+            source={{ uri: service.icon_url }}
+            style={styles.customIcon}
+            resizeMode="contain"
+          />
+        ) : (
+          <Feather name={iconName} size={32} color={theme.brandGreen} />
+        )}
       </View>
 
       <View style={styles.content}>
@@ -139,6 +147,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: Spacing.md,
+  },
+  customIcon: {
+    width: 64,
+    height: 64,
+    borderRadius: BorderRadius.sm,
   },
   content: {
     flex: 1,

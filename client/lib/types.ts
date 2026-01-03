@@ -15,6 +15,7 @@ export interface Service {
   category: string | null;
   is_active: boolean;
   icon_key: string | null;
+  icon_url: string | null;
   starting_price_label: string | null;
   estimated_duration_minutes: number | null;
   created_at: string;

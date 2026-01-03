@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Alert, ScrollView, Pressable, ActivityIndicator } from "react-native";
+import { View, StyleSheet, Alert, ScrollView, Pressable, ActivityIndicator, Image } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -11,8 +11,8 @@ import { Card } from "@/components/Card";
 import { Chip, getStatusChipVariant, getStatusLabel } from "@/components/Chip";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
-import { getBookingById, cancelBooking } from "@/lib/api";
-import { BookingWithDetails } from "@/lib/types";
+import { getBookingById, cancelBooking, getBookingImages } from "@/lib/api";
+import { BookingWithDetails, BookingImage } from "@/lib/types";
 import { queryClient } from "@/lib/query-client";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
@@ -28,6 +28,7 @@ export default function BookingDetailScreen() {
   const { bookingId } = route.params;
 
   const [booking, setBooking] = useState<BookingWithDetails | null>(null);
+  const [bookingImages, setBookingImages] = useState<BookingImage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCanceling, setIsCanceling] = useState(false);
 
@@ -39,6 +40,12 @@ export default function BookingDetailScreen() {
     try {
       const data = await getBookingById(bookingId);
       setBooking(data);
+
+      // Load booking images
+      if (data) {
+        const images = await getBookingImages(bookingId);
+        setBookingImages(images);
+      }
     } catch (error) {
       console.error("Error loading booking:", error);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -243,6 +250,33 @@ export default function BookingDetailScreen() {
             </View>
           </>
         ) : null}
+
+        {bookingImages.length > 0 ? (
+          <>
+            <View style={[styles.divider, { backgroundColor: theme.border }]} />
+            <View style={styles.detailRow}>
+              <Feather name="camera" size={20} color={theme.brandGreen} />
+              <View style={styles.detailContent}>
+                <ThemedText type="small" style={{ color: theme.textSecondary }}>
+                  Property Photos ({bookingImages.length})
+                </ThemedText>
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  style={styles.imagesContainer}
+                >
+                  {bookingImages.map((img) => (
+                    <Image
+                      key={img.id}
+                      source={{ uri: img.image_url }}
+                      style={styles.bookingImage}
+                    />
+                  ))}
+                </ScrollView>
+              </View>
+            </View>
+          </>
+        ) : null}
       </Card>
 
       <View style={styles.metaInfo}>
@@ -317,5 +351,14 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     backgroundColor: "#DC2626",
+  },
+  imagesContainer: {
+    marginTop: Spacing.sm,
+  },
+  bookingImage: {
+    width: 80,
+    height: 80,
+    borderRadius: BorderRadius.sm,
+    marginRight: Spacing.sm,
   },
 });

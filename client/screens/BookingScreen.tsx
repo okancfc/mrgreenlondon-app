@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Alert, ScrollView, Pressable, Platform } from "react-native";
+import { View, StyleSheet, Alert, ScrollView, Pressable, Platform, Image } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -15,10 +15,11 @@ import { TextField } from "@/components/TextField";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { AreaSelector } from "@/components/AreaSelector";
+import { ImagePickerSection } from "@/components/ImagePickerSection";
 import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/context/AuthContext";
 import { Spacing, BorderRadius } from "@/constants/theme";
-import { getServiceById, getDefaultAddress, createAddress, createBooking, upsertProfile } from "@/lib/api";
+import { getServiceById, getDefaultAddress, createAddress, createBooking, upsertProfile, uploadBookingImage } from "@/lib/api";
 import { Service, Address, TIME_WINDOWS } from "@/lib/types";
 import { queryClient } from "@/lib/query-client";
 import { handlePhoneInput, isValidUKPhoneNumber } from "@/lib/phone";
@@ -69,6 +70,7 @@ export default function BookingScreen() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
 
   const {
     control,
@@ -179,7 +181,7 @@ export default function BookingScreen() {
         is_default: !defaultAddress,
       });
 
-      await createBooking({
+      const newBooking = await createBooking({
         user_id: user.id,
         service_id: service.id,
         address_id: newAddress.id,
@@ -188,6 +190,15 @@ export default function BookingScreen() {
         status: "requested",
         cancel_reason: null,
       });
+
+      // Upload images if any
+      if (selectedImages.length > 0) {
+        await Promise.all(
+          selectedImages.map((imageUri) =>
+            uploadBookingImage(user.id, newBooking.id, imageUri)
+          )
+        );
+      }
 
       // Save phone and area to profile for future bookings
       if (selectedArea || data.phone) {
@@ -456,6 +467,12 @@ export default function BookingScreen() {
         )}
       />
 
+      <ImagePickerSection
+        images={selectedImages}
+        onImagesChange={setSelectedImages}
+        maxImages={5}
+      />
+
       <Button
         onPress={handleNext}
         style={[styles.nextButton, { backgroundColor: theme.brandGreen }]}
@@ -535,6 +552,33 @@ export default function BookingScreen() {
                     Notes
                   </ThemedText>
                   <ThemedText type="body">{formData.notes}</ThemedText>
+                </View>
+              </View>
+            </>
+          ) : null}
+
+          {selectedImages.length > 0 ? (
+            <>
+              <View style={[styles.divider, { backgroundColor: theme.border }]} />
+              <View style={styles.summaryRow}>
+                <Feather name="camera" size={20} color={theme.brandGreen} />
+                <View style={styles.summaryContent}>
+                  <ThemedText type="small" style={{ color: theme.textSecondary }}>
+                    Photos ({selectedImages.length})
+                  </ThemedText>
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    style={styles.reviewImagesContainer}
+                  >
+                    {selectedImages.map((uri, index) => (
+                      <Image
+                        key={index}
+                        source={{ uri }}
+                        style={styles.reviewImage}
+                      />
+                    ))}
+                  </ScrollView>
                 </View>
               </View>
             </>
@@ -662,5 +706,14 @@ const styles = StyleSheet.create({
   },
   confirmButton: {
     marginTop: Spacing.md,
+  },
+  reviewImagesContainer: {
+    marginTop: Spacing.sm,
+  },
+  reviewImage: {
+    width: 60,
+    height: 60,
+    borderRadius: BorderRadius.sm,
+    marginRight: Spacing.sm,
   },
 });

@@ -1,5 +1,5 @@
 import { supabase } from "./supabase";
-import { Profile, Service, Address, Booking, BookingWithDetails } from "./types";
+import { Profile, Service, Address, Booking, BookingWithDetails, BookingImage } from "./types";
 
 // ============================================
 // Services
@@ -169,4 +169,100 @@ export async function cancelBooking(id: string, cancelReason?: string): Promise<
 
   if (error) throw error;
   return data;
+}
+
+// ============================================
+// Booking Images
+// ============================================
+
+export async function uploadBookingImage(
+  userId: string,
+  bookingId: string,
+  imageUri: string
+): Promise<BookingImage> {
+  // Generate unique filename
+  const fileExtension = imageUri.split('.').pop()?.split('?')[0] || 'jpg';
+  const fileName = `${userId}/${bookingId}/${Date.now()}.${fileExtension}`;
+  const contentType = `image/${fileExtension === 'jpg' ? 'jpeg' : fileExtension}`;
+
+  // Create form data for React Native upload
+  const formData = new FormData();
+  formData.append('file', {
+    uri: imageUri,
+    name: fileName.split('/').pop(),
+    type: contentType,
+  } as any);
+
+  // Get the Supabase storage URL
+  const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+
+  // Get current session for auth
+  const { data: { session } } = await supabase.auth.getSession();
+  const token = session?.access_token || supabaseKey;
+
+  // Upload using fetch with FormData
+  const uploadResponse = await fetch(
+    `${supabaseUrl}/storage/v1/object/booking-images/${fileName}`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'x-upsert': 'false',
+      },
+      body: formData,
+    }
+  );
+
+  if (!uploadResponse.ok) {
+    const errorData = await uploadResponse.json();
+    throw new Error(errorData.message || 'Failed to upload image');
+  }
+
+  // Get public URL
+  const { data: urlData } = supabase.storage
+    .from('booking-images')
+    .getPublicUrl(fileName);
+
+  // Create booking_images record
+  const { data, error } = await supabase
+    .from('booking_images')
+    .insert({
+      booking_id: bookingId,
+      image_url: urlData.publicUrl,
+      storage_path: fileName,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function getBookingImages(bookingId: string): Promise<BookingImage[]> {
+  const { data, error } = await supabase
+    .from('booking_images')
+    .select('*')
+    .eq('booking_id', bookingId)
+    .order('created_at', { ascending: true });
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function deleteBookingImage(id: string, storagePath: string): Promise<void> {
+  // Delete from storage
+  const { error: storageError } = await supabase.storage
+    .from('booking-images')
+    .remove([storagePath]);
+
+  if (storageError) throw storageError;
+
+  // Delete from database
+  const { error } = await supabase
+    .from('booking_images')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
 }

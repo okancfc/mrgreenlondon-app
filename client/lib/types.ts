@@ -32,6 +32,14 @@ export interface Address {
   created_at: string;
 }
 
+export interface BookingImage {
+  id: string;
+  booking_id: string;
+  image_url: string;
+  storage_path: string;
+  created_at: string;
+}
+
 export type BookingStatus = "requested" | "confirmed" | "completed" | "canceled";
 
 export interface Booking {
@@ -47,6 +55,7 @@ export interface Booking {
   updated_at: string;
   service?: Service;
   address?: Address;
+  images?: BookingImage[];
 }
 
 export interface BookingWithDetails extends Booking {

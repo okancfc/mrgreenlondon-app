@@ -161,7 +161,7 @@ export default function ProfileScreen() {
               {profile?.full_name || "Sir Green User"}
             </ThemedText>
             <ThemedText type="small" style={{ color: theme.textSecondary }}>
-              {profile?.phone || user?.phone || "No phone"}
+              {profile?.email || user?.email || "No email"}
             </ThemedText>
           </View>
         </View>

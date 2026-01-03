@@ -162,7 +162,6 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 64,
     height: 64,
-    borderRadius: BorderRadius.sm,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: Spacing.md,
@@ -170,7 +169,6 @@ const styles = StyleSheet.create({
   customIcon: {
     width: 64,
     height: 64,
-    borderRadius: BorderRadius.sm,
   },
   content: {
     flex: 1,

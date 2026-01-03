@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet, Pressable, Image, ScrollView, Alert, Platform } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from "expo-image-manipulator";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
@@ -36,6 +37,21 @@ export function ImagePickerSection({
         return true;
     };
 
+    // Compress image to reduce file size
+    const compressImage = async (uri: string): Promise<string> => {
+        try {
+            const manipulatedImage = await ImageManipulator.manipulateAsync(
+                uri,
+                [{ resize: { width: 1024 } }], // Resize to max 1024px width
+                { compress: 0.6, format: ImageManipulator.SaveFormat.JPEG } // 60% quality, JPEG format
+            );
+            return manipulatedImage.uri;
+        } catch (error) {
+            console.error("Error compressing image:", error);
+            return uri; // Return original if compression fails
+        }
+    };
+
     const pickImage = async (useCamera: boolean) => {
         const hasPermission = await requestPermissions();
         if (!hasPermission) return;
@@ -43,7 +59,7 @@ export function ImagePickerSection({
         const options: ImagePicker.ImagePickerOptions = {
             mediaTypes: ["images"],
             allowsEditing: false,
-            quality: 0.7,
+            quality: 0.8,
             allowsMultipleSelection: !useCamera,
             selectionLimit: maxImages - images.length,
         };
@@ -57,8 +73,11 @@ export function ImagePickerSection({
             }
 
             if (!result.canceled && result.assets.length > 0) {
-                const newImages = result.assets.map((asset) => asset.uri);
-                const updatedImages = [...images, ...newImages].slice(0, maxImages);
+                // Compress all selected images
+                const compressedImages = await Promise.all(
+                    result.assets.map((asset) => compressImage(asset.uri))
+                );
+                const updatedImages = [...images, ...compressedImages].slice(0, maxImages);
                 onImagesChange(updatedImages);
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             }

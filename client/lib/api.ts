@@ -123,7 +123,7 @@ export async function getBookings(userId: string): Promise<BookingWithDetails[]>
       address:addresses(*)
     `)
     .eq("user_id", userId)
-    .order("scheduled_at", { ascending: false });
+    .order("created_at", { ascending: false });
 
   if (error) throw error;
   return data || [];

@@ -14,6 +14,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Spacing } from "@/constants/theme";
 import { getServices } from "@/lib/api";
 import { Service } from "@/lib/types";
+import { formatNameWithGender } from "@/lib/format";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -50,18 +51,24 @@ export default function HomeScreen() {
     [handleServicePress]
   );
 
-  const renderHeader = () => (
-    <View style={styles.headerContainer}>
-      <ThemedText type="body" style={{ color: theme.textSecondary }}>
-        Hello{profile?.full_name ? `, ${profile.full_name}` : ""}
-      </ThemedText>
-      {profile?.area ? (
-        <ThemedText type="small" style={{ color: theme.textSecondary }}>
-          Serving {profile.area} London
+  const renderHeader = () => {
+    const displayName = profile?.full_name
+      ? formatNameWithGender(profile.full_name, profile.gender)
+      : "";
+
+    return (
+      <View style={styles.headerContainer}>
+        <ThemedText type="body" style={{ color: theme.textSecondary }}>
+          Hello{displayName ? `, ${displayName}` : ""}
         </ThemedText>
-      ) : null}
-    </View>
-  );
+        {profile?.area ? (
+          <ThemedText type="small" style={{ color: theme.textSecondary }}>
+            Serving {profile.area} London
+          </ThemedText>
+        ) : null}
+      </View>
+    );
+  };
 
   const renderEmpty = () => {
     if (isLoading) {

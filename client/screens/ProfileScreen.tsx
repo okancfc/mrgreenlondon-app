@@ -19,6 +19,7 @@ import { Spacing, BorderRadius } from "@/constants/theme";
 import { upsertProfile } from "@/lib/api";
 import { deleteAccount } from "@/lib/auth";
 import { handlePhoneInput, isValidUKPhoneNumber, formatUKPhoneNumber } from "@/lib/phone";
+import { formatNameWithGender } from "@/lib/format";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -158,7 +159,7 @@ export default function ProfileScreen() {
           </View>
           <View style={styles.profileInfo}>
             <ThemedText type="h4">
-              {profile?.full_name || "Sir Green User"}
+              {profile?.full_name ? formatNameWithGender(profile.full_name, profile.gender) : "Sir Green User"}
             </ThemedText>
             <ThemedText type="small" style={{ color: theme.textSecondary }}>
               {profile?.email || user?.email || "No email"}

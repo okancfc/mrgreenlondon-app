@@ -30,6 +30,7 @@ const signUpSchema = z
             (val) => !val || val === "" || isValidUKPhoneNumber(val),
             "Please enter a valid UK phone number (+44 7XXX XXX XXX)"
         ),
+        gender: z.enum(["male", "female", "other", "prefer_not_to_say"]).optional(),
         password: z.string().min(6, "Password must be at least 6 characters"),
         confirmPassword: z.string(),
     })
@@ -45,6 +46,7 @@ export default function SignUpScreen() {
     const navigation = useNavigation<NavigationProp>();
     const { theme, isDark } = useTheme();
     const [isLoading, setIsLoading] = useState(false);
+    const [selectedGender, setSelectedGender] = useState<string | null>(null);
     const keyboardHeight = useSharedValue(0);
 
     useKeyboardHandler({
@@ -72,6 +74,7 @@ export default function SignUpScreen() {
             fullName: "",
             email: "",
             phone: "",
+            gender: undefined,
             password: "",
             confirmPassword: "",
         },
@@ -89,6 +92,7 @@ export default function SignUpScreen() {
                     email: data.email,
                     phone: data.phone || null,
                     full_name: data.fullName,
+                    gender: data.gender || null,
                     area: null,
                 });
 
@@ -190,6 +194,89 @@ export default function SignUpScreen() {
                                 onBlur={onBlur}
                                 error={errors.phone?.message}
                             />
+                        )}
+                    />
+
+                    <Controller
+                        control={control}
+                        name="gender"
+                        render={({ field: { onChange } }) => (
+                            <View>
+                                <ThemedText type="small" style={[{ color: theme.textSecondary, marginBottom: Spacing.sm }]}>
+                                    Gender (Optional)
+                                </ThemedText>
+                                <View style={styles.genderContainer}>
+                                    <Pressable
+                                        onPress={() => {
+                                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                            setSelectedGender("male");
+                                            onChange("male");
+                                        }}
+                                        style={[
+                                            styles.genderButton,
+                                            {
+                                                backgroundColor: selectedGender === "male" ? theme.brandGreen + "15" : theme.backgroundDefault,
+                                                borderColor: selectedGender === "male" ? theme.brandGreen : theme.border,
+                                            },
+                                        ]}
+                                    >
+                                        <ThemedText
+                                            style={{
+                                                color: selectedGender === "male" ? theme.brandGreen : theme.text,
+                                                fontWeight: selectedGender === "male" ? "600" : "400",
+                                            }}
+                                        >
+                                            Male
+                                        </ThemedText>
+                                    </Pressable>
+                                    <Pressable
+                                        onPress={() => {
+                                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                            setSelectedGender("female");
+                                            onChange("female");
+                                        }}
+                                        style={[
+                                            styles.genderButton,
+                                            {
+                                                backgroundColor: selectedGender === "female" ? theme.brandGreen + "15" : theme.backgroundDefault,
+                                                borderColor: selectedGender === "female" ? theme.brandGreen : theme.border,
+                                            },
+                                        ]}
+                                    >
+                                        <ThemedText
+                                            style={{
+                                                color: selectedGender === "female" ? theme.brandGreen : theme.text,
+                                                fontWeight: selectedGender === "female" ? "600" : "400",
+                                            }}
+                                        >
+                                            Female
+                                        </ThemedText>
+                                    </Pressable>
+                                    <Pressable
+                                        onPress={() => {
+                                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                            setSelectedGender("other");
+                                            onChange("other");
+                                        }}
+                                        style={[
+                                            styles.genderButton,
+                                            {
+                                                backgroundColor: selectedGender === "other" ? theme.brandGreen + "15" : theme.backgroundDefault,
+                                                borderColor: selectedGender === "other" ? theme.brandGreen : theme.border,
+                                            },
+                                        ]}
+                                    >
+                                        <ThemedText
+                                            style={{
+                                                color: selectedGender === "other" ? theme.brandGreen : theme.text,
+                                                fontWeight: selectedGender === "other" ? "600" : "400",
+                                            }}
+                                        >
+                                            Other
+                                        </ThemedText>
+                                    </Pressable>
+                                </View>
+                            </View>
                         )}
                     />
 
@@ -310,6 +397,18 @@ const styles = StyleSheet.create({
     },
     form: {
         gap: Spacing.sm,
+    },
+    genderContainer: {
+        flexDirection: "row",
+        gap: Spacing.sm,
+        marginBottom: Spacing.sm,
+    },
+    genderButton: {
+        flex: 1,
+        padding: Spacing.md,
+        borderWidth: 1,
+        borderRadius: 8,
+        alignItems: "center",
     },
     signinContainer: {
         flexDirection: "row",

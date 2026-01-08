@@ -3,6 +3,7 @@ export interface Profile {
   email: string | null;
   phone: string | null;
   full_name: string | null;
+  gender: string | null;
   area: string | null;
   created_at: string;
 }
@@ -27,6 +28,7 @@ export interface Address {
   user_id: string;
   line1: string;
   line2: string | null;
+  company: string | null;
   city: string;
   postcode: string;
   is_default: boolean;

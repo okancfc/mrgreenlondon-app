@@ -31,6 +31,7 @@ type RouteProps = RouteProp<RootStackParamList, "Booking">;
 const addressSchema = z.object({
   line1: z.string().min(1, "Address line 1 is required"),
   line2: z.string().optional(),
+  company: z.string().optional(),
   city: z.string().min(1, "City is required"),
   postcode: z
     .string()
@@ -83,6 +84,7 @@ export default function BookingScreen() {
     defaultValues: {
       line1: "",
       line2: "",
+      company: "",
       city: "London",
       postcode: "",
       phone: "",
@@ -114,6 +116,7 @@ export default function BookingScreen() {
       if (addressData) {
         setValue("line1", addressData.line1);
         setValue("line2", addressData.line2 || "");
+        setValue("company", addressData.company || "");
         setValue("city", addressData.city);
         setValue("postcode", addressData.postcode);
       }
@@ -176,6 +179,7 @@ export default function BookingScreen() {
         user_id: user.id,
         line1: data.line1,
         line2: data.line2 || null,
+        company: data.company || null,
         city: data.city,
         postcode: data.postcode.toUpperCase(),
         is_default: !defaultAddress,
@@ -312,6 +316,20 @@ export default function BookingScreen() {
           <TextField
             label="Address Line 2"
             placeholder="Flat, suite, unit (optional)"
+            value={value}
+            onChangeText={onChange}
+            onBlur={onBlur}
+          />
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="company"
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextField
+            label="Company"
+            placeholder="Company name (optional)"
             value={value}
             onChangeText={onChange}
             onBlur={onBlur}
@@ -518,6 +536,9 @@ export default function BookingScreen() {
                 {formData.line1}
                 {formData.line2 ? `, ${formData.line2}` : ""}
               </ThemedText>
+              {formData.company && (
+                <ThemedText type="body">{formData.company}</ThemedText>
+              )}
               <ThemedText type="body">
                 {formData.city}, {formData.postcode}
               </ThemedText>

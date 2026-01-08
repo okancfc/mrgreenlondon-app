@@ -52,7 +52,7 @@ const getCategoryColor = (category: string | null): { background: string; accent
     "gardening": { background: "#C8E6C9", accent: "#388E3C" },      // Dark green
     "garden": { background: "#C8E6C9", accent: "#388E3C" },         // Dark green
     "maintenance": { background: "#FFF8E1", accent: "#D4A574" },    // Beige
-    "cleaning": { background: "#E3F2FD", accent: "#1E3A5F" },       // Navy blue
+    "cleaning": { background: "#E3F2FD", accent: "#064dabff" },       // Navy blue
     "home improvements": { background: "#F3E5F5", accent: "#9C27B0" }, // Lavender/Purple
     "home improvement": { background: "#F3E5F5", accent: "#9C27B0" },  // Lavender/Purple
     "painting": { background: "#FCE4EC", accent: "#E91E63" },       // Pink

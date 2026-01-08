@@ -209,6 +209,9 @@ export default function BookingDetailScreen() {
                 {booking.address.line2 ? (
                   <ThemedText type="body">{booking.address.line2}</ThemedText>
                 ) : null}
+                {booking.address.company ? (
+                  <ThemedText type="body">{booking.address.company}</ThemedText>
+                ) : null}
                 <ThemedText type="body">
                   {booking.address.city}, {booking.address.postcode}
                 </ThemedText>

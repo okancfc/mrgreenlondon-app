@@ -287,12 +287,6 @@ export default function BookingScreen() {
 
   const renderAddressStep = () => (
     <View style={styles.stepContent}>
-      <ThemedText type="h3" style={styles.stepTitle}>
-        Delivery Address
-      </ThemedText>
-      <ThemedText type="body" style={[styles.stepSubtitle, { color: theme.textSecondary }]}>
-        Where should we provide the service?
-      </ThemedText>
 
       <Controller
         control={control}
@@ -402,12 +396,6 @@ export default function BookingScreen() {
 
   const renderScheduleStep = () => (
     <View style={styles.stepContent}>
-      <ThemedText type="h3" style={styles.stepTitle}>
-        Choose Date & Time
-      </ThemedText>
-      <ThemedText type="body" style={[styles.stepSubtitle, { color: theme.textSecondary }]}>
-        When would you like the service?
-      </ThemedText>
 
       <ThemedText type="small" style={[styles.fieldLabel, { color: theme.textSecondary }]}>
         Select Date
@@ -504,12 +492,6 @@ export default function BookingScreen() {
     const formData = getValues();
     return (
       <View style={styles.stepContent}>
-        <ThemedText type="h3" style={styles.stepTitle}>
-          Review Your Booking
-        </ThemedText>
-        <ThemedText type="body" style={[styles.stepSubtitle, { color: theme.textSecondary }]}>
-          Please confirm the details below
-        </ThemedText>
 
         <Card style={styles.summaryCard}>
           <View style={styles.summaryRow}>
@@ -617,36 +599,67 @@ export default function BookingScreen() {
     );
   };
 
+  // Get the current step title and subtitle
+  const getStepHeader = () => {
+    if (step === 0) {
+      return { title: "Delivery Address", subtitle: "Where should we provide the service?" };
+    } else if (step === 1) {
+      return { title: "Choose Date & Time", subtitle: "When would you like the service?" };
+    } else {
+      return { title: "Review Your Booking", subtitle: "Please confirm the details below" };
+    }
+  };
+
+  const stepHeader = getStepHeader();
+
   return (
-    <KeyboardAwareScrollViewCompat
-      style={[styles.container, { backgroundColor: theme.backgroundRoot }]}
-      contentContainerStyle={[
-        styles.content,
-        {
-          paddingTop: insets.top + Spacing.lg,
-          paddingBottom: insets.bottom + Spacing.xl,
-        },
-      ]}
-    >
-      <View style={styles.header}>
-        <Pressable onPress={handleBack} style={styles.backButton}>
-          <Feather name="arrow-left" size={24} color={theme.text} />
-        </Pressable>
-        <ThemedText type="h4">{serviceName}</ThemedText>
-        <View style={styles.spacer} />
+    <View style={[styles.container, { backgroundColor: theme.backgroundRoot, paddingTop: insets.top }]}>
+      {/* Fixed Header Section */}
+      <View style={[styles.fixedHeader, { paddingHorizontal: Spacing.lg }]}>
+        <View style={styles.header}>
+          <Pressable onPress={handleBack} style={styles.backButton}>
+            <Feather name="arrow-left" size={24} color={theme.text} />
+          </Pressable>
+          <ThemedText type="h4">{serviceName}</ThemedText>
+          <View style={styles.spacer} />
+        </View>
+
+        {renderStepIndicator()}
+
+        <ThemedText type="h3" style={styles.stepTitle}>
+          {stepHeader.title}
+        </ThemedText>
+        <ThemedText type="body" style={[styles.stepSubtitle, { color: theme.textSecondary }]}>
+          {stepHeader.subtitle}
+        </ThemedText>
       </View>
 
-      {renderStepIndicator()}
-
-      {step === 0 && renderAddressStep()}
-      {step === 1 && renderScheduleStep()}
-      {step === 2 && renderReviewStep()}
-    </KeyboardAwareScrollViewCompat>
+      {/* Scrollable Content Section */}
+      <KeyboardAwareScrollViewCompat
+        style={styles.scrollContent}
+        contentContainerStyle={[
+          styles.content,
+          {
+            paddingBottom: insets.bottom + Spacing.xl,
+          },
+        ]}
+      >
+        {step === 0 && renderAddressStep()}
+        {step === 1 && renderScheduleStep()}
+        {step === 2 && renderReviewStep()}
+      </KeyboardAwareScrollViewCompat>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  fixedHeader: {
+    paddingTop: Spacing.lg,
+  },
+  scrollContent: {
     flex: 1,
   },
   content: {
